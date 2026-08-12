@@ -1,10 +1,12 @@
+import "../css/Home.css";
 
-
-
-function Home() {
+function Home({ setMostrarMenu }) {
   return (
-    <div>
-      <h1>Home</h1>
+    <div className="home">
+      <img src="https://www.sesisp.org.br/wp-content/uploads/2021/06/logo-sesi.png" alt="Logo SeSi" />
+      <h1>Jogos Esportivos SESI</h1>
+      <p>Bem-vindo ao nosso site!</p>
+      
     </div>
   )
 }

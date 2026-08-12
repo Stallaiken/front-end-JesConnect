@@ -1,0 +1,33 @@
+/* Container da página para garantir o alinhamento */
+.page-container {
+  position: relative;
+  padding: 2rem;
+  padding-top: 5rem; /* Espaço para o botão não cobrir o título */
+}
+
+/* Estilo moderno para o botão de voltar */
+.btn-voltar {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  background: transparent;
+  border: 1px solid #4a5568; /* Borda sutil */
+  color: #a0aec0; /* Cor cinza clara/neutra */
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem; /* Bordas arredondadas levemente */
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Efeito ao passar o mouse */
+.btn-voltar:hover {
+  background-color: #2d3748; /* Fundo levemente mais claro */
+  color: #ffffff; /* Texto branco */
+  border-color: #718096;
+  transform: translateX(-2px); /* Pequeno efeito de empurrão para a esquerda */
+}
