@@ -5,13 +5,14 @@ import Home from './Pages/Home.jsx';
 import Administrativo from './Pages/Administrativo.jsx';
 import Erro404 from './Pages/Erro404.jsx';
 import Visitante from './Pages/Visitante.jsx';
-
+import MenuFilho from './Components/MenuFilho.jsx';
 function App() {
+ const [MenuAberto,setMenuAberto] = useState(false)
 
   return (
     <>
-    <Menu></Menu>
-    
+    <Menu aoAbrir={setMenuAberto}></Menu>
+    {MenuAberto && <MenuFilho></MenuFilho>}
       <Routes>
         <Route path="/" element={<Visitante />} />
         <Route path="/Administrativo" element={<Administrativo />} />

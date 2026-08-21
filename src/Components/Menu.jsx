@@ -4,15 +4,16 @@ import { useState } from "react";
 import MenuFilho from "../Components/MenuFilho.jsx"
 
 
-function Menu() {
- const [MenuAberto, setMenuAberto] = useState(false)
+function Menu({aoAbrir}) {
+
 
   return (
     <div className="menu">
       
       <div className="icone-mais-opcoes">
         <button className="btn-mais-opcoes" onClick={()=>{
-
+          aoAbrir(prev => !prev)
+           
         }}>
            <span className="texto-menu-jogos">☰</span>
         </button>
