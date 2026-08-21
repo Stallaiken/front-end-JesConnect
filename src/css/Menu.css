@@ -1,16 +1,61 @@
-.menu-list {
-  display: flex;
-  justify-content: center; 
-  align-items: center;    
-  gap: 20px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.menu{
+
+.menu {
   display: flex;
   justify-content: space-between; 
   align-items: center;    
-  padding: 10px;
-  background-color: #f0f0f0;
+  padding: 15px 30px;             
+  background-color: gray;      
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.icone-mais-opcoes {
+    display: flex;
+    align-items: center;
+}
+
+.btn-mais-opcoes {
+    width: 50px;                  
+    height: 50px;                 
+    border-radius: 50%;           
+    padding: 0;                   
+    
+    background-color: #ffffff;    
+    color: #1e1e24;              
+    border: none;
+    cursor: pointer;
+    
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;            
+    letter-spacing: 0.5px;
+    
+   
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+
+.btn-mais-opcoes:hover {
+    background-color: #e5e4e7;    
+    transform: scale(1.05);
+}
+
+.texto-menu-jogos {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 200%;           
+    font-weight: 800;          
+    letter-spacing: 1px;      
+    text-transform: uppercase;
+    color: black;           
+    align-self: center;
+    margin: auto;
+    
+    user-select: none;         
+    pointer-events: none;    
+    
 }
