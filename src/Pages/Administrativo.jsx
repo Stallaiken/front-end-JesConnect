@@ -10,7 +10,7 @@ function Administrativo() {
      
 
      <main className="content">
-    <h1>Administrativo</h1>
+    <h1><strong>ADMINISTRATIVO</strong></h1>
 
       <p>Login</p>
       <input type="text" placeholder="Usuário" />
@@ -20,7 +20,6 @@ function Administrativo() {
       <button>Entrar</button>
 
      </main> 
-     <button onClick={() => navigate(-1)}>Voltar</button>
     </div>
   )
 }
