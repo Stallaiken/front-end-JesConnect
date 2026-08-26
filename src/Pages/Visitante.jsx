@@ -1,10 +1,10 @@
 import "../css/Visitante.css";
-
+import Sesi_Logo from "../assets/Sesi logo nova.png"
 function Visitante() {
   return (
     <div className="container-visitante"> 
       <div className="container-logo">
-        <h1 className="logo-sesi">SESI</h1>
+       <img className="logo-sesi" src={Sesi_Logo} alt="" />
         <p className="sublogo-jes">JES CONNECT</p>
       </div>
     </div>

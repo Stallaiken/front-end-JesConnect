@@ -1,7 +1,5 @@
-import { Link } from "react-router-dom";
 import "../css/Menu.css";
-import { useState } from "react";
-import MenuFilho from "../Components/MenuFilho.jsx";
+import Sesi_Logo from "../assets/Sesi_Logo.png";
 
 function Menu({ aoAbrir }) {
   return (
@@ -15,6 +13,10 @@ function Menu({ aoAbrir }) {
         >
           <div className="tres-tracinhos"></div>
         </button>
+      </div>
+
+      <div className="logo-sesi-menu">
+        <img src={Sesi_Logo} alt="Logo SESI" />
       </div>
     </div>
   );

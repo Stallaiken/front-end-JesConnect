@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'; 
 import { Routes, Route, useLocation } from 'react-router-dom'; 
 import Menu from './Components/Menu.jsx';
-import Home from './Pages/Home.jsx';
 import Administrativo from './Pages/Administrativo.jsx';
 import Erro404 from './Pages/Erro404.jsx';
 import Visitante from './Pages/Visitante.jsx';
