@@ -2,7 +2,7 @@ import "../css/MenuFilho.css";
 import { useNavigate } from "react-router-dom";
 
 
-function MenuFilho() {
+function MenuFilho({aoAbrir}) {
  const navigate = useNavigate()
 
   return (
@@ -14,7 +14,10 @@ function MenuFilho() {
         <button className="btn-menu-item">
             HISTORICO
         </button>
-        <button className="btn-menu-item">
+        <button className="btn-menu-item" onClick={()=>{
+          aoAbrir(false)
+          navigate("/Horarios")
+        }}>
           HORARIOS
         </button>
         <button className="btn-menu-item">
@@ -32,6 +35,7 @@ function MenuFilho() {
       </nav>
       <button className="Administrativo-menu" onClick={()=>{
         navigate("/Administrativo")
+        aoAbrir(false)
       }}>ADMINISTRATIVO</button>
     </div>
   );
