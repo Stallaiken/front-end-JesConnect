@@ -1,21 +1,11 @@
-
 import "../css/Visitante.css";
 
-
 function Visitante() {
-  
-  
   return (
-    <div className="container-visitante">
-   
-      <div className="conteiner-comfronto">
-          <img className='TimeA' src="" alt="" /> 
-          <p className='VS'>X</p>
-          <img className='TimeB' src="" alt="" />
-      </div>
-      
+    <div className="container-visitante"> 
       <div className="container-logo">
-        <span className="logo-sesi">SESI</span>
+        <h1 className="logo-sesi">SESI</h1>
+        <p className="sublogo-jes">JES CONNECT</p>
       </div>
     </div>
   );
