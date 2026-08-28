@@ -20,19 +20,32 @@ function MenuFilho({aoAbrir}) {
         }}>
           HORARIOS
         </button>
-        <button className="btn-menu-item">
+        <button className="btn-menu-item" onClick={()=>{
+          aoAbrir(false)
+          navigate("/Futsete")
+        }}>
           FUTSETE
         </button>
-        <button className="btn-menu-item">
+        <button className="btn-menu-item" onClick={()=>{
+          aoAbrir(false)
+          navigate("/Futsal")
+        }}>
           FUTSAL
         </button>
-        <button className="btn-menu-item">
+        <button className="btn-menu-item" onClick={()=>{
+          aoAbrir(false)
+          navigate("/Queimado")
+        }}>
           QUEIMADO
         </button>
-        <button className="btn-menu-item">
+        <button className="btn-menu-item" onClick={()=>{
+          aoAbrir(false)
+          navigate("/Vollei")
+        }}>
           VOLLEI
         </button>
       </nav>
+      <button className="Regras-menu">Regras</button>
       <button className="Administrativo-menu" onClick={()=>{
         navigate("/Administrativo")
         aoAbrir(false)

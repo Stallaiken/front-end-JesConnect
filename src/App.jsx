@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react'; 
-import { Routes, Route, useLocation } from 'react-router-dom'; 
+import { useState } from 'react';
+import { Routes, Route} from 'react-router-dom'; 
 import Menu from './Components/Menu.jsx';
 import Administrativo from './Pages/Administrativo.jsx';
 import Erro404 from './Pages/Erro404.jsx';
 import Visitante from './Pages/Visitante.jsx';
 import MenuFilho from './Components/MenuFilho.jsx';
 import Horarios from './Pages/Horarios.jsx';
+import Futsete from './Pages/jogos/Futsete.jsx';
+import Queimado from './Pages/jogos/Queimado.jsx';
+import Futsal from './Pages/jogos/Futsal.jsx';
+import Vollei from './Pages/jogos/Vollei.jsx';
 function App() {
  const [MenuAberto,setMenuAberto] = useState(false)
 
@@ -17,7 +21,11 @@ function App() {
         <Route path="/" element={<Visitante />} />
         <Route path="/Administrativo" element={<Administrativo />} />
         <Route path="*" element={<Erro404 />} />
-       <Route path='Horarios' element={<Horarios/>}/>
+        <Route path='/Horarios' element={<Horarios/>}/>
+        <Route path='/Futsete' element={<Futsete/>}/>
+        <Route path='/Queimado' element={<Queimado/>}/>
+        <Route path='/Futsal' element={<Futsal/>}/>
+        <Route path='/Vollei' element={<Vollei/>}/>
       </Routes>
     </>
   );
