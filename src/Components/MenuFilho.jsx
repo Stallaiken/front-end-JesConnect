@@ -11,7 +11,10 @@ function MenuFilho({aoAbrir}) {
         <button className="btn-menu-item">
           RANKING
         </button>
-        <button className="btn-menu-item">
+        <button className="btn-menu-item" onClick={()=>{
+          aoAbrir(false)
+          navigate("/Historico")
+        }}>
             HISTORICO
         </button>
         <button className="btn-menu-item" onClick={()=>{
@@ -45,7 +48,9 @@ function MenuFilho({aoAbrir}) {
           VOLLEI
         </button>
       </nav>
-      <button className="Regras-menu">Regras</button>
+      <button className="Regras-menu">
+        REGRAS
+      </button>
       <button className="Administrativo-menu" onClick={()=>{
         navigate("/Administrativo")
         aoAbrir(false)

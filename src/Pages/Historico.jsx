@@ -1,20 +1,28 @@
 import { useState, useEffect } from "react";
-import "../../css/Horarios.css";
-import { MOCK_JOGOS } from "../../utils/Mock"; 
+import "../css/Horarios.css";
+import { MOCK_JOGOS } from "../utils/Mock";
 
-function Queimado() {
+function Historico() {
   const [jogos, setJogos] = useState([]);
 
   useEffect(() => {
-    const jogosQueimado = MOCK_JOGOS.filter((jogo) => jogo.modalidade === "QUEIMADO");
-    setJogos(jogosQueimado);
+    const agora = new Date();
+    const horaAtual = `${String(agora.getHours()).padStart(2, "0")}:${String(
+      agora.getMinutes()
+    ).padStart(2, "0")}`;
+
+    const jogosPassados = MOCK_JOGOS.filter((jogo) => {
+      const horarioRef = jogo.horarioFim || jogo.horario;
+      return horarioRef <= horaAtual;
+    }).sort((a, b) => a.horario.localeCompare(b.horario));
+
+    setJogos(jogosPassados);
   }, []);
 
   return (
     <div className="horarios-page">
       <div className="horarios-titulo-container">
-        <h1 className="horarios-titulo">Horarios de Inicio</h1>
-        <h2 className="horarios-subtitulo">QUEIMADO</h2>
+        <h1 className="horarios-titulo">Histórico de Jogos</h1>
       </div>
 
       <div className="lista-confrontos">
@@ -41,11 +49,11 @@ function Queimado() {
             </div>
           ))
         ) : (
-          <p className="horarios-mensagem-vazia">Nenhum jogo de Queimado programado.</p>
+          <p className="horarios-mensagem-vazia">Nenhum jogo finalizado até o momento.</p>
         )}
       </div>
     </div>
   );
 }
 
-export default Queimado;
+export default Historico;

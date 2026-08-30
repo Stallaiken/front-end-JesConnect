@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "../../css/Horarios.css";
-import { MOCK_JOGOS } from "../Horarios.jsx"; 
+import { MOCK_JOGOS } from "../../utils/Mock"; 
 
 function Futsete() {
   const [jogos, setJogos] = useState([]);
