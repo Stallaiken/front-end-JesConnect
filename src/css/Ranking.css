@@ -1,0 +1,190 @@
+.ranking-page {
+  background-color: #ffffff;
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.ranking-container {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ranking-titulo {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #000000;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+/* Seletor de Modalidades */
+.modalidade-selector {
+  position: relative;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.modalidade-btn {
+  width: 100%;
+  height: 48px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.seta-dropdown {
+  font-size: 0.8rem;
+}
+
+.modalidade-dropdown {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  width: 100%;
+  background-color: #000000;
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item.ativo {
+  background-color: #222222;
+  color: #1b52e0;
+}
+
+/* Pódio */
+.podio-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.podio-coluna {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.bandeira-podio-wrapper {
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 12px;
+  width: 46px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  font-size: 1.4rem;
+}
+
+.bloco-podio {
+  background-color: #000000;
+  width: 100%;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 8px;
+}
+
+.bloco-primeiro {
+  height: 90px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.bloco-segundo {
+  height: 65px;
+  border-top-right-radius: 16px;
+}
+
+.bloco-terceiro {
+  height: 50px;
+  border-top-left-radius: 16px;
+}
+
+.posicao-numero {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+/* Lista do Ranking */
+.ranking-lista {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-ranking-item {
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 20px;
+  height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.posicao-lista {
+  font-size: 1.4rem;
+  font-weight: bold;
+  width: 30px;
+}
+
+.nome-time-lista {
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex-grow: 1;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.bandeira-badge-lista {
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: 44px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.mensagem-vazia {
+  text-align: center;
+  color: #666666;
+  font-size: 0.95rem;
+  margin-top: 10px;
+}

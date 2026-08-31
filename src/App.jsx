@@ -11,6 +11,8 @@ import Queimado from './Pages/jogos/Queimado.jsx';
 import Futsal from './Pages/jogos/Futsal.jsx';
 import Vollei from './Pages/jogos/Vollei.jsx';
 import Historico from './Pages/Historico.jsx';
+import Ranking from './Pages/Ranking.jsx';
+
 function App() {
  const [MenuAberto,setMenuAberto] = useState(false)
 
@@ -27,7 +29,8 @@ function App() {
         <Route path='/Queimado' element={<Queimado/>}/>
         <Route path='/Futsal' element={<Futsal/>}/>
         <Route path='/Vollei' element={<Vollei/>}/>
-        <Route path='Historico' element={<Historico/>}/>
+        <Route path='/Historico' element={<Historico/>}/>
+        <Route path='/Ranking' element={<Ranking/>}/>
       </Routes>
     </>
   );

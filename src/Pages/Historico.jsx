@@ -1,22 +1,16 @@
 import { useState, useEffect } from "react";
 import "../css/Horarios.css";
-import { MOCK_JOGOS } from "../utils/Mock";
+import { MOCK_JOGOS } from "../utils/mockJogos";
 
 function Historico() {
   const [jogos, setJogos] = useState([]);
 
   useEffect(() => {
-    const agora = new Date();
-    const horaAtual = `${String(agora.getHours()).padStart(2, "0")}:${String(
-      agora.getMinutes()
-    ).padStart(2, "0")}`;
+    const jogosFinalizados = MOCK_JOGOS.filter(
+      (jogo) => jogo.status === "finalizado"
+    );
 
-    const jogosPassados = MOCK_JOGOS.filter((jogo) => {
-      const horarioRef = jogo.horarioFim || jogo.horario;
-      return horarioRef <= horaAtual;
-    }).sort((a, b) => a.horario.localeCompare(b.horario));
-
-    setJogos(jogosPassados);
+    setJogos(jogosFinalizados);
   }, []);
 
   return (
@@ -29,7 +23,9 @@ function Historico() {
         {jogos.length > 0 ? (
           jogos.map((jogo) => (
             <div key={jogo.id} className="card-confronto">
-              <span className="modalidade-titulo">{jogo.modalidade}</span>
+              <span className="modalidade-titulo">
+                {jogo.modalidade} {jogo.genero ? `(${jogo.genero})` : ""}
+              </span>
 
               <div className="conteudo-confronto">
                 <div className="time-box">

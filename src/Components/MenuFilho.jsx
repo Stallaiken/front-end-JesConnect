@@ -8,8 +8,12 @@ function MenuFilho({aoAbrir}) {
   return (
     <div className="Menu-mais-opcoes">
       <nav className="menu-nav">
-        <button className="btn-menu-item">
+        <button className="btn-menu-item" onClick={()=>{
+          aoAbrir(false)
+          navigate("/Ranking")
+        }}>
           RANKING
+          
         </button>
         <button className="btn-menu-item" onClick={()=>{
           aoAbrir(false)
