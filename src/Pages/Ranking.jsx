@@ -6,17 +6,35 @@ const MODALIDADES = ["QUEIMADO", "FUTSAL", "FUTSETE", "VOLLEI"];
 
 function Ranking() {
   const [modalidade, setModalidade] = useState("QUEIMADO");
+  const [generoFiltro, setGeneroFiltro] = useState("M");
   const [menuAberto, setMenuAberto] = useState(false);
 
   // Filtra times que possuem a modalidade e os ordena por pontos (decrescente)
   const timesFiltrados = Object.values(MOCK_TIMES)
-    .filter((time) => time.modalidades.includes(modalidade))
-    .sort((a, b) => b.pontos - a.pontos);
+    .filter((time) => time.modalidades?.includes(modalidade))
+    .sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
 
   const primeiro = timesFiltrados[0];
   const segundo = timesFiltrados[1];
   const terceiro = timesFiltrados[2];
   const demaisTimes = timesFiltrados.slice(3);
+
+  const ocultarBotaoGenero = modalidade === "FUTSETE";
+
+  // Helper para renderização segura das bandeiras (Imagem URL ou Emoji)
+  const renderBandeira = (time) => {
+    const bandeira = time?.bandeira;
+    if (bandeira?.startsWith("http")) {
+      return (
+        <img
+          src={bandeira}
+          alt={time?.nome || "Time"}
+          className="bandeira-img"
+        />
+      );
+    }
+    return <span className="bandeira-emoji">{bandeira || "❓"}</span>;
+  };
 
   return (
     <div className="ranking-page">
@@ -51,12 +69,32 @@ function Ranking() {
           )}
         </div>
 
+        {/* Filtro Masculino / Feminino */}
+        {!ocultarBotaoGenero && (
+          <div className="filtros-container">
+            <div className="toggle-genero-container">
+              <button
+                className={`btn-genero ${generoFiltro === "M" ? "ativo" : ""}`}
+                onClick={() => setGeneroFiltro("M")}
+              >
+                M
+              </button>
+              <button
+                className={`btn-genero ${generoFiltro === "F" ? "ativo" : ""}`}
+                onClick={() => setGeneroFiltro("F")}
+              >
+                F
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Pódio */}
         <div className="podio-container">
           {/* 3º Lugar (Esquerda) */}
           <div className="podio-coluna">
             <div className="bandeira-podio-wrapper">
-              <span className="bandeira-emoji">{terceiro ? terceiro.bandeira : "❓"}</span>
+              {renderBandeira(terceiro)}
             </div>
             <div className="bloco-podio bloco-terceiro">
               <span className="posicao-numero">3</span>
@@ -66,7 +104,7 @@ function Ranking() {
           {/* 1º Lugar (Centro) */}
           <div className="podio-coluna">
             <div className="bandeira-podio-wrapper">
-              <span className="bandeira-emoji">{primeiro ? primeiro.bandeira : "❓"}</span>
+              {renderBandeira(primeiro)}
             </div>
             <div className="bloco-podio bloco-primeiro">
               <span className="posicao-numero">1</span>
@@ -76,7 +114,7 @@ function Ranking() {
           {/* 2º Lugar (Direita) */}
           <div className="podio-coluna">
             <div className="bandeira-podio-wrapper">
-              <span className="bandeira-emoji">{segundo ? segundo.bandeira : "❓"}</span>
+              {renderBandeira(segundo)}
             </div>
             <div className="bloco-podio bloco-segundo">
               <span className="posicao-numero">2</span>
@@ -92,7 +130,7 @@ function Ranking() {
                 <span className="posicao-lista">{idx + 4}</span>
                 <span className="nome-time-lista">{time.nome}</span>
                 <div className="bandeira-badge-lista">
-                  <span className="bandeira-emoji">{time.bandeira}</span>
+                  {renderBandeira(time)}
                 </div>
               </div>
             ))

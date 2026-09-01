@@ -274,3 +274,37 @@
   padding: 6px 14px;    
   flex-shrink: 0;       
 }
+
+.filtros-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.toggle-genero-container {
+  background-color: #000000;
+  border-radius: 25px;
+  padding: 4px;
+  display: flex;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-genero {
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-genero.ativo {
+  background-color: #2551e0;
+  color: #ffffff;
+}
