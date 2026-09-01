@@ -3,29 +3,27 @@ import "../css/Horarios.css";
 import { MOCK_JOGOS } from "../utils/mockJogos";
 
 function Historico() {
-  const [jogos, setJogos] = useState([]);
+  const [jogosFinalizados, setJogosFinalizados] = useState([]);
 
   useEffect(() => {
-    const jogosFinalizados = MOCK_JOGOS.filter(
-      (jogo) => jogo.status === "finalizado"
-    );
-
-    setJogos(jogosFinalizados);
+    // Exibe somente confrontos com status "finalizado"
+    const finalizados = MOCK_JOGOS.filter((jogo) => jogo.status === "finalizado");
+    setJogosFinalizados(finalizados);
   }, []);
 
   return (
     <div className="horarios-page">
       <div className="horarios-titulo-container">
-        <h1 className="horarios-titulo">Histórico de Jogos</h1>
+        <h1 className="horarios-titulo">HISTÓRICO DE JOGOS</h1>
       </div>
 
       <div className="lista-confrontos">
-        {jogos.length > 0 ? (
-          jogos.map((jogo) => (
+        {jogosFinalizados.length === 0 ? (
+          <p className="horarios-mensagem-vazia">Nenhum jogo finalizado até o momento.</p>
+        ) : (
+          jogosFinalizados.map((jogo) => (
             <div key={jogo.id} className="card-confronto">
-              <span className="modalidade-titulo">
-                {jogo.modalidade} {jogo.genero ? `(${jogo.genero})` : ""}
-              </span>
+              <span className="modalidade-titulo">{jogo.modalidade}</span>
 
               <div className="conteudo-confronto">
                 <div className="time-box">
@@ -33,8 +31,8 @@ function Historico() {
                   <span className="nome-time">{jogo.timeA.nome}</span>
                 </div>
 
-                <div className="horario-pill">
-                  {jogo.horario}
+                <div className="horario-pill placar-pill">
+                  {jogo.placar?.timeA ?? 0} - {jogo.placar?.timeB ?? 0}
                 </div>
 
                 <div className="time-box">
@@ -44,8 +42,6 @@ function Historico() {
               </div>
             </div>
           ))
-        ) : (
-          <p className="horarios-mensagem-vazia">Nenhum jogo finalizado até o momento.</p>
         )}
       </div>
     </div>

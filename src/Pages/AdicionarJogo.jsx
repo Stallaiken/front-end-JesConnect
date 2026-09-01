@@ -1,32 +1,67 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../css/AdicionarJogo.css";
 import { MOCK_TIMES } from "../utils/mockTimes";
 import { MOCK_MODALIDADES } from "../utils/mockModalidades";
+import { MOCK_JOGOS } from "../utils/mockJogos";
 
 function AdicionarJogo() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const jogoParaEditar = location.state?.jogoParaEditar;
+  const isEditing = location.state?.isEditing || false;
+
   const [timeA, setTimeA] = useState("");
   const [timeB, setTimeB] = useState("");
   const [horario, setHorario] = useState("");
   const [modalidade, setModalidade] = useState("");
 
-  const handleAvancar = (e) => {
+  useEffect(() => {
+    if (isEditing && jogoParaEditar) {
+      const chaveA = Object.keys(MOCK_TIMES).find(
+        (k) => MOCK_TIMES[k].nome === jogoParaEditar.timeA.nome
+      );
+      const chaveB = Object.keys(MOCK_TIMES).find(
+        (k) => MOCK_TIMES[k].nome === jogoParaEditar.timeB.nome
+      );
+
+      setTimeA(chaveA || "");
+      setTimeB(chaveB || "");
+      setHorario(jogoParaEditar.horario || "");
+      setModalidade(jogoParaEditar.modalidade || "");
+    }
+  }, [isEditing, jogoParaEditar]);
+
+  const handleSalvar = (e) => {
     e.preventDefault();
     if (!timeA || !timeB || !horario || !modalidade) {
       alert("Por favor, preencha todos os campos!");
       return;
     }
 
-    navigate("/salvar-jogo", {
-      state: { timeAKey: timeA, timeBKey: timeB, horario, modalidade }
-    });
+    if (isEditing && jogoParaEditar) {
+      const index = MOCK_JOGOS.findIndex((j) => j.id === jogoParaEditar.id);
+      if (index !== -1) {
+        MOCK_JOGOS[index] = {
+          ...MOCK_JOGOS[index],
+          modalidade,
+          horario,
+          timeA: MOCK_TIMES[timeA],
+          timeB: MOCK_TIMES[timeB]
+        };
+      }
+      navigate("/horarios");
+    } else {
+      navigate("/salvar-jogo", {
+        state: { timeAKey: timeA, timeBKey: timeB, horario, modalidade }
+      });
+    }
   };
 
   return (
     <div className="add-jogo-page">
-      <form onSubmit={handleAvancar} className="add-jogo-container">
-        {/* TIME 1 */}
+      <form onSubmit={handleSalvar} className="add-jogo-container">
         <span className="section-label">TIME 1</span>
         <div className="input-card">
           <div className="icon-box">✏️</div>
@@ -44,7 +79,6 @@ function AdicionarJogo() {
 
         <div className="vs-divider">VS</div>
 
-        {/* TIME 2 */}
         <span className="section-label">TIME 2</span>
         <div className="input-card">
           <div className="icon-box">✏️</div>
@@ -60,7 +94,6 @@ function AdicionarJogo() {
           <span className="pencil-icon">✏️</span>
         </div>
 
-        {/* CONFIGS */}
         <div className="configs-divider">
           <span>CONFIGS</span>
           <hr />
@@ -91,7 +124,9 @@ function AdicionarJogo() {
           <span className="pencil-icon">✏️</span>
         </div>
 
-        <button type="submit" className="btn-salvar-principal">salvar</button>
+        <button type="submit" className="btn-salvar-principal">
+          salvar
+        </button>
       </form>
     </div>
   );

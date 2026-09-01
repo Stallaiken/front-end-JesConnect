@@ -14,6 +14,7 @@ import Historico from './Pages/Historico.jsx';
 import Ranking from './Pages/Ranking.jsx';
 import AdicionarJogo from './Pages/AdicionarJogo.jsx';
 import SalvarJogo from './Pages/SalvarJogo.jsx';
+import Finalizar from './Pages/Finalizar.jsx';
 function App() {
  const [MenuAberto,setMenuAberto] = useState(false)
 
@@ -34,6 +35,7 @@ function App() {
         <Route path='/Ranking' element={<Ranking/>}/>
         <Route path='/adicionar-jogo' element={<AdicionarJogo/>}/>
         <Route path='/salvar-jogo' element={<SalvarJogo/>}/>
+        <Route path='/Finalizar' element={<Finalizar/>}/>
       </Routes>
     </>
   );

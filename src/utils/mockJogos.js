@@ -4,72 +4,74 @@ import { MOCK_TIMES } from "./mockTimes";
 export const MOCK_JOGOS = [
   {
     id: 1,
-    modalidade: MOCK_MODALIDADES.FUTSETE_MASCULINO.nome,
-    genero: MOCK_MODALIDADES.FUTSETE_MASCULINO.genero,
+    modalidade: "FUTSETEL",
     horario: "13:30",
-    horarioFim: "14:10",
-    status: "finalizado",
-    timeA: MOCK_TIMES["6A_SESI"],
-    timeB: MOCK_TIMES["6B_SESI"]
+    status: "em espera",
+    timeA: { nome: "6A SESI", bandeira: "🇧🇷" },
+    timeB: { nome: "6B SESI", bandeira: "🇦🇷" },
+    placar: { timeA: 0, timeB: 0 }
   },
   {
     id: 2,
-    modalidade: MOCK_MODALIDADES.FUTSAL_FEMININO.nome,
-    genero: MOCK_MODALIDADES.FUTSAL_FEMININO.genero,
+    modalidade: "FUTSAL",
     horario: "14:15",
-    horarioFim: "14:55",
-    status: "finalizado",
-    timeA: MOCK_TIMES["7A_SESI"],
-    timeB: MOCK_TIMES["7B_SESI"]
+    status: "em espera",
+    timeA: { nome: "7A SESI", bandeira: "🇪🇸" },
+    timeB: { nome: "7B SESI", bandeira: "🇩🇪" },
+    placar: { timeA: 0, timeB: 0 }
   },
   {
     id: 3,
-    modalidade: MOCK_MODALIDADES.QUEIMADO_FEMININO.nome,
-    genero: MOCK_MODALIDADES.QUEIMADO_FEMININO.genero,
+    modalidade: "QUEIMADO",
     horario: "15:00",
-    horarioFim: "15:30",
     status: "em espera",
-    timeA: MOCK_TIMES["6A_SESI"],
-    timeB: MOCK_TIMES["6B_SESI"]
+    timeA: { nome: "6A SESI", bandeira: "🇧🇷" },
+    timeB: { nome: "6B SESI", bandeira: "🇦🇷" },
+    placar: { timeA: 0, timeB: 0 }
   },
   {
     id: 4,
-    modalidade: MOCK_MODALIDADES.VOLLEI_MASCULINO.nome,
-    genero: MOCK_MODALIDADES.VOLLEI_MASCULINO.genero,
+    modalidade: "VOLLEI",
     horario: "15:35",
-    horarioFim: "16:20",
     status: "em espera",
-    timeA: MOCK_TIMES["8A_SESI"],
-    timeB: MOCK_TIMES["9B_SESI"]
+    timeA: { nome: "8A SESI", bandeira: "🇮🇹" },
+    timeB: { nome: "9B SESI", bandeira: "🇯🇵" },
+    placar: { timeA: 0, timeB: 0 }
   },
   {
     id: 5,
-    modalidade: MOCK_MODALIDADES.VOLLEI_FEMININO.nome,
-    genero: MOCK_MODALIDADES.VOLLEI_FEMININO.genero,
-    horario: "16:25",
-    horarioFim: "17:10",
+    modalidade: "BASQUETE",
+    horario: "16:20",
     status: "em espera",
-    timeA: MOCK_TIMES["8B_SESI"],
-    timeB: MOCK_TIMES["9C_SESI"]
+    timeA: { nome: "8B SESI", bandeira: "🇺🇸" },
+    timeB: { nome: "9A SESI", bandeira: "🇨🇦" },
+    placar: { timeA: 0, timeB: 0 }
   },
   {
     id: 6,
-    modalidade: MOCK_MODALIDADES.QUEIMADO_MASCULINO.nome,
-    genero: MOCK_MODALIDADES.QUEIMADO_MASCULINO.genero,
-    horario: "17:15",
-    horarioFim: "17:45",
+    modalidade: "HANDBALL",
+    horario: "17:00",
     status: "em espera",
-    timeA: MOCK_TIMES["7B_SESI"],
-    timeB: MOCK_TIMES["8B_SESI"]
+    timeA: { nome: "7B SESI", bandeira: "🇩🇪" },
+    timeB: { nome: "8A SESI", bandeira: "🇮🇹" },
+    placar: { timeA: 0, timeB: 0 }
   },
   {
     id: 7,
-    modalidade: MOCK_MODALIDADES.FUTSAL_MASCULINO.nome,
-    genero: MOCK_MODALIDADES.FUTSAL_MASCULINO.genero,
-    horario: "17:50",
-    horarioFim: "18:30",
+    modalidade: "FUTSAL",
+    horario: "17:45",
     status: "em espera",
-    timeA: MOCK_TIMES["9A_SESI"],
-    timeB: MOCK_TIMES["9B_SESI"]
+    timeA: { nome: "9A SESI", bandeira: "🇨🇦" },
+    timeB: { nome: "9C SESI", bandeira: "🇫🇷" },
+    placar: { timeA: 0, timeB: 0 }
+  },
+  {
+    id: 8,
+    modalidade: "QUEIMADO",
+    horario: "18:30",
+    status: "em espera",
+    timeA: { nome: "6B SESI", bandeira: "🇦🇷" },
+    timeB: { nome: "7A SESI", bandeira: "🇪🇸" },
+    placar: { timeA: 0, timeB: 0 }
   }
 ];
