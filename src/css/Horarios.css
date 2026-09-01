@@ -112,3 +112,137 @@
   text-align: center;
   margin-top: 20px;
 }
+
+.card-confronto-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+
+.card-admin-actions {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 5;
+}
+
+.btn-action {
+  background-color: #1b52e0;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  width: 58px;
+  height: 58px;
+  font-size: 0.52rem; 
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  line-height: 1;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-action:hover {
+  background-color: #1440b3;
+  transform: scale(1.08);
+}
+
+
+
+.fab-container {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.fab-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: popup 0.2s ease-out;
+}
+
+
+.fab-main-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #1b52e0;
+  color: #ffffff;
+  border: 3px solid #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.fab-main-button:hover {
+  transform: scale(1.05);
+  background-color: #1440b3;
+}
+
+
+.fab-sub-button {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background-color: #1b52e0;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.fab-sub-button:hover {
+  transform: scale(1.08);
+  background-color: #1440b3;
+}
+
+.fab-sub-button.btn-texto {
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.fab-sub-button.btn-icone {
+  font-size: 1.8rem;
+  font-weight: 300;
+}
+
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
