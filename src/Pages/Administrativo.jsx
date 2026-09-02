@@ -1,28 +1,44 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient"; // ajuste o caminho
 import "../css/Administrativo.css";
-import { MOCK_USUARIOS_ADMIN } from "../utils/mockAdministradores"; 
 
 function Administrativo() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setErro("");
 
-    const usuarioValido = MOCK_USUARIOS_ADMIN.find(
-      (u) => u.nome === usuario && u.senha === senha
-    );
+    try {
+      const { data, error } = await supabase.rpc("verificar_admin", {
+        p_usuario: usuario,
+        p_senha: senha,
+      });
 
-    if (usuarioValido) {
-      localStorage.setItem("isAdmin", "true");
-      localStorage.setItem("usuarioLogado", usuarioValido.nome);
-      setErro("");
-      navigate("/horarios"); 
-    } else {
-      setErro("Usuário ou senha incorretos.");
+      if (error) {
+        console.error(error);
+        setErro("Erro ao tentar fazer login.");
+        return;
+      }
+
+      if (data === true) {
+        localStorage.setItem("isAdmin", "true");
+        localStorage.setItem("usuarioLogado", usuario);
+        navigate("/horarios");
+      } else {
+        setErro("Usuário ou senha incorretos.");
+      }
+    } catch (err) {
+      console.error(err);
+      setErro("Erro ao tentar fazer login.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,29 +55,29 @@ function Administrativo() {
           {erro && <p className="admin-erro">{erro}</p>}
 
           <div className="input-group">
-            <input 
-              type="text" 
-              className="admin-input" 
-              placeholder="Usuário" 
+            <input
+              type="text"
+              className="admin-input"
+              placeholder="Usuário"
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
-              required 
+              required
             />
           </div>
 
           <div className="input-group">
-            <input 
-              type="password" 
-              className="admin-input" 
-              placeholder="Senha" 
+            <input
+              type="password"
+              className="admin-input"
+              placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              required 
+              required
             />
           </div>
 
-          <button type="submit" className="admin-button">
-            Entrar
+          <button type="submit" className="admin-button" disabled={loading}>
+            {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
       </div>

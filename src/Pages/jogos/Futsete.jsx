@@ -3,12 +3,12 @@ import "../../css/Horarios.css";
 import { MOCK_JOGOS } from "../../utils/mockJogos.js";
 
 function Futsete() {
-  // Filtra apenas jogos de FUTSETE em espera
+
   const jogosFutsete = MOCK_JOGOS.filter(
     (jogo) => jogo.modalidade === "FUTSETE" && jogo.status === "em espera"
   );
 
-  // Renderização segura de bandeira (Imagem, Emoji ou Fallback)
+  
   const renderBandeira = (time) => {
     const bandeira = time?.bandeira;
     if (bandeira?.startsWith("http")) {
@@ -30,7 +30,7 @@ function Futsete() {
         <h2 className="horarios-subtitulo">FUTSETE</h2>
       </div>
 
-      {/* Lista de Confrontos */}
+    
       <div className="lista-confrontos">
         {jogosFutsete.length > 0 ? (
           jogosFutsete.map((jogo) => (

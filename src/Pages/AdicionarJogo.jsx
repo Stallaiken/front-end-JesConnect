@@ -1,135 +1,257 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 import "../css/AdicionarJogo.css";
-import { MOCK_TIMES } from "../utils/mockTimes";
-import { MOCK_MODALIDADES } from "../utils/mockModalidades";
-import { MOCK_JOGOS } from "../utils/mockJogos";
 
-function AdicionarJogo() {
+// Carrega todas as bandeiras da pasta automaticamente
+const bandeirasModules = import.meta.glob(
+  "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
+  { eager: true }
+);
+
+const BANDEIRAS = {};
+for (const path in bandeirasModules) {
+  const fileName = path.split("/").pop().split(".")[0];
+  BANDEIRAS[fileName] = bandeirasModules[path].default;
+}
+
+function AdicionarTime() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const jogoParaEditar = location.state?.jogoParaEditar;
-  const isEditing = location.state?.isEditing || false;
-
-  const [timeA, setTimeA] = useState("");
-  const [timeB, setTimeB] = useState("");
-  const [horario, setHorario] = useState("");
-  const [modalidade, setModalidade] = useState("");
+  const [nome, setNome] = useState("");
+  const [modalidadeId, setModalidadeId] = useState("");
+  const [bandeira, setBandeira] = useState("");
+  const [modalidades, setModalidades] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
+  const [sucesso, setSucesso] = useState(false);
 
   useEffect(() => {
-    if (isEditing && jogoParaEditar) {
-      const chaveA = Object.keys(MOCK_TIMES).find(
-        (k) => MOCK_TIMES[k].nome === jogoParaEditar.timeA.nome
-      );
-      const chaveB = Object.keys(MOCK_TIMES).find(
-        (k) => MOCK_TIMES[k].nome === jogoParaEditar.timeB.nome
-      );
+    const carregarModalidades = async () => {
+      const { data } = await supabase
+        .from("modalidade")
+        .select("id, nome, genero")
+        .order("nome");
+      if (data) setModalidades(data);
+    };
+    carregarModalidades();
+  }, []);
 
-      setTimeA(chaveA || "");
-      setTimeB(chaveB || "");
-      setHorario(jogoParaEditar.horario || "");
-      setModalidade(jogoParaEditar.modalidade || "");
-    }
-  }, [isEditing, jogoParaEditar]);
-
-  const handleSalvar = (e) => {
+  const handleSalvar = async (e) => {
     e.preventDefault();
-    if (!timeA || !timeB || !horario || !modalidade) {
-      alert("Por favor, preencha todos os campos!");
+    setErro("");
+    setSucesso(false);
+
+    if (!nome.trim()) {
+      setErro("Digite o nome do time");
+      return;
+    }
+    if (!modalidadeId) {
+      setErro("Selecione a modalidade");
+      return;
+    }
+    if (!bandeira) {
+      setErro("Escolha uma bandeira");
       return;
     }
 
-    if (isEditing && jogoParaEditar) {
-      const index = MOCK_JOGOS.findIndex((j) => j.id === jogoParaEditar.id);
-      if (index !== -1) {
-        MOCK_JOGOS[index] = {
-          ...MOCK_JOGOS[index],
-          modalidade,
-          horario,
-          timeA: MOCK_TIMES[timeA],
-          timeB: MOCK_TIMES[timeB]
-        };
-      }
-      navigate("/horarios");
-    } else {
-      navigate("/salvar-jogo", {
-        state: { timeAKey: timeA, timeBKey: timeB, horario, modalidade }
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.from("time").insert({
+        Nome: nome.trim(),
+        id_modalidade: modalidadeId,
+        logo_URL: bandeira,
       });
+
+      if (error) throw error;
+
+      setSucesso(true);
+      setTimeout(() => navigate("/horarios"), 1200);
+    } catch (err) {
+      console.error(err);
+      setErro("Erro ao salvar. Esse nome de time já existe?");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="add-jogo-page">
-      <form onSubmit={handleSalvar} className="add-jogo-container">
-        <span className="section-label">TIME 1</span>
-        <div className="input-card">
-          <div className="icon-box">✏️</div>
-          <div className="input-field-wrapper">
-            <label>NOME DA EQUIPE:</label>
-            <select value={timeA} onChange={(e) => setTimeA(e.target.value)} required>
-              <option value="">Selecione...</option>
-              {Object.entries(MOCK_TIMES).map(([chave, time]) => (
-                <option key={chave} value={chave}>{time.nome}</option>
-              ))}
-            </select>
+      <div className="add-jogo-container" style={{ maxWidth: "480px" }}>
+        {/* Cabeçalho */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+          <h2 style={{ margin: 0, fontSize: "1.4rem" }}>Novo Time</h2>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "1.5rem",
+              cursor: "pointer",
+              color: "#64748b",
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Prévia do Time */}
+        <div
+          style={{
+            background: "#f8fafc",
+            borderRadius: "16px",
+            padding: "20px",
+            marginBottom: "28px",
+            border: "1px solid #e2e8f0",
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+          }}
+        >
+          <div
+            style={{
+              width: "64px",
+              height: "44px",
+              borderRadius: "8px",
+              overflow: "hidden",
+              background: "#e2e8f0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            {bandeira && BANDEIRAS[bandeira] ? (
+              <img
+                src={BANDEIRAS[bandeira]}
+                alt="bandeira"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              <span style={{ fontSize: "24px" }}>🏳️</span>
+            )}
           </div>
-          <span className="pencil-icon">✏️</span>
-        </div>
 
-        <div className="vs-divider">VS</div>
-
-        <span className="section-label">TIME 2</span>
-        <div className="input-card">
-          <div className="icon-box">✏️</div>
-          <div className="input-field-wrapper">
-            <label>NOME DA EQUIPE:</label>
-            <select value={timeB} onChange={(e) => setTimeB(e.target.value)} required>
-              <option value="">Selecione...</option>
-              {Object.entries(MOCK_TIMES).map(([chave, time]) => (
-                <option key={chave} value={chave}>{time.nome}</option>
-              ))}
-            </select>
+          <div style={{ overflow: "hidden" }}>
+            <div style={{ fontWeight: 700, fontSize: "1.1rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {nome || "Nome do Time"}
+            </div>
+            <div style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "2px" }}>
+              {modalidades.find((m) => m.id === modalidadeId)?.nome || "Modalidade"}
+            </div>
           </div>
-          <span className="pencil-icon">✏️</span>
         </div>
 
-        <div className="configs-divider">
-          <span>CONFIGS</span>
-          <hr />
-        </div>
-
-        <div className="input-card config-card">
-          <label>HORARIO:</label>
+        {/* Nome */}
+        <div className="input-card config-card" style={{ marginBottom: "16px" }}>
+          <label>NOME DO TIME</label>
           <input
             type="text"
-            placeholder="XX:XX"
-            value={horario}
-            onChange={(e) => setHorario(e.target.value)}
-            required
+            placeholder="Ex: Colégio Santa Mônica"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            maxLength={40}
           />
-          <span className="pencil-icon">✏️</span>
         </div>
 
-        <div className="input-card config-card">
-          <label>MODALIDADE:</label>
-          <select value={modalidade} onChange={(e) => setModalidade(e.target.value)} required>
+        {/* Modalidade */}
+        <div className="input-card config-card" style={{ marginBottom: "24px" }}>
+          <label>MODALIDADE</label>
+          <select
+            value={modalidadeId}
+            onChange={(e) => setModalidadeId(e.target.value)}
+          >
             <option value="">Selecione...</option>
-            {Object.values(MOCK_MODALIDADES).map((mod) => (
-              <option key={mod.id} value={mod.nome}>
-                {mod.nome} ({mod.genero})
+            {modalidades.map((mod) => (
+              <option key={mod.id} value={mod.id}>
+                {mod.nome}
+                {mod.genero && mod.genero !== "Not" ? ` (${mod.genero})` : ""}
               </option>
             ))}
           </select>
-          <span className="pencil-icon">✏️</span>
         </div>
 
-        <button type="submit" className="btn-salvar-principal">
-          salvar
+        {/* Bandeiras */}
+        <div style={{ marginBottom: "28px" }}>
+          <label style={{ display: "block", fontWeight: 600, marginBottom: "12px", fontSize: "0.9rem" }}>
+            BANDEIRA
+          </label>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))",
+              gap: "10px",
+              maxHeight: "240px",
+              overflowY: "auto",
+              padding: "4px",
+            }}
+          >
+            {Object.entries(BANDEIRAS).map(([key, src]) => {
+              const selecionada = bandeira === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setBandeira(key)}
+                  style={{
+                    border: selecionada ? "3px solid #2563eb" : "2px solid #e2e8f0",
+                    borderRadius: "12px",
+                    padding: "8px",
+                    background: selecionada ? "#eff6ff" : "white",
+                    cursor: "pointer",
+                    transition: "all 0.15s",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <img
+                    src={src}
+                    alt={key}
+                    style={{
+                      width: "48px",
+                      height: "32px",
+                      objectFit: "cover",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Mensagens */}
+        {erro && (
+          <p style={{ color: "#dc2626", textAlign: "center", marginBottom: "12px", fontSize: "0.9rem" }}>
+            {erro}
+          </p>
+        )}
+        {sucesso && (
+          <p style={{ color: "#16a34a", textAlign: "center", marginBottom: "12px", fontSize: "0.9rem" }}>
+            Time cadastrado com sucesso!
+          </p>
+        )}
+
+        {/* Botão Salvar */}
+        <button
+          type="button"
+          onClick={handleSalvar}
+          disabled={loading}
+          className="btn-salvar-principal"
+          style={{
+            width: "100%",
+            opacity: loading ? 0.7 : 1,
+          }}
+        >
+          {loading ? "Salvando..." : "Salvar Time"}
         </button>
-      </form>
+      </div>
     </div>
   );
 }
 
-export default AdicionarJogo;
+export default AdicionarTime;
