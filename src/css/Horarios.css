@@ -150,9 +150,7 @@
   .lista-confrontos {
     max-width: 1100px;
   }
-  .card-confronto {
-    width: calc(33.333% - 12px);
-  }
+
 }
 
 
