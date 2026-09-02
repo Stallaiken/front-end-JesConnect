@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "../css/Horarios.css";
 
+// Importação dinâmica de imagens de bandeiras
 const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
   {
@@ -11,12 +12,21 @@ const bandeirasModules = import.meta.glob(
 );
 
 const BANDEIRAS = {};
-
 for (const path in bandeirasModules) {
   const fileName = path.split("/").pop().split(".")[0];
 
   BANDEIRAS[fileName] = bandeirasModules[path].default;
 }
+
+// Utilitário para resolver o caminho/URL da bandeira
+const getBandeira = (logo) => {
+  if (!logo) return null;
+  if (logo.startsWith("http://") || logo.startsWith("https://")) {
+    return logo;
+  }
+  const cleanName = logo.split("/").pop().split(".")[0];
+  return BANDEIRAS[cleanName] || null;
+};
 
 function Ranking() {
   const [ranking, setRanking] = useState([]);
@@ -28,6 +38,11 @@ function Ranking() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const carregarModalidades = async () => {
+      const { data, error } = await supabase
+        .from("modalidade")
+        .select("id, nome, genero")
+        .order("nome");
     const carregarModalidades = async () => {
       const { data, error } = await supabase
         .from("modalidade")
@@ -50,10 +65,10 @@ function Ranking() {
   }, []);
 
   useEffect(() => {
-    if (!modalidadeSelecionada) {
-      return;
-    }
+    if (!modalidadeSelecionada) return;
 
+    const calcularRanking = async () => {
+      setLoading(true);
     const calcularRanking = async () => {
       setLoading(true);
 
@@ -128,6 +143,8 @@ function Ranking() {
 
           t1.jogos += 1;
           t2.jogos += 1;
+          t1.jogos += 1;
+          t2.jogos += 1;
 
           t1.golsPro += gols1;
 
@@ -176,6 +193,7 @@ function Ranking() {
 
     calcularRanking();
   }, [modalidadeSelecionada]);
+  }, [modalidadeSelecionada]);
 
   const primeiro = ranking[0];
 
@@ -201,6 +219,8 @@ function Ranking() {
         <select
           value={modalidadeSelecionada}
           onChange={(e) => setModalidadeSelecionada(e.target.value)}
+          value={modalidadeSelecionada}
+          onChange={(e) => setModalidadeSelecionada(e.target.value)}
           style={{
             padding: "10px 16px",
             borderRadius: "12px",
@@ -216,6 +236,12 @@ function Ranking() {
               {m.genero && m.genero !== "Not" ? ` (${m.genero})` : ""}
             </option>
           ))}
+          {modalidades.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.nome}
+              {m.genero && m.genero !== "Not" ? ` (${m.genero})` : ""}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -224,7 +250,12 @@ function Ranking() {
       )}
 
       {!loading && ranking.length === 0 && (
+        <p className="horarios-mensagem-vazia">Calculando ranking...</p>
+      )}
+
+      {!loading && ranking.length === 0 && (
         <p className="horarios-mensagem-vazia">
+          Nenhuma partida finalizada para esta modalidade.
           Nenhuma partida finalizada para esta modalidade.
         </p>
       )}
