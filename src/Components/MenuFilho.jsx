@@ -73,7 +73,7 @@ function MenuFilho({ aoAbrir }) {
       </nav>
       <a
   className="btn-menu-item"
-  href="/regulamento-jes-2026.pdf"
+  href="\public\Regulamento-JES-2026.pdf"
   download="Regulamento-JES-2026.pdf"
 >
   Baixar Regulamento

@@ -1,184 +1,116 @@
-import {
-  useState,
-  useEffect,
-} from "react";
+import { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "../css/AdicionarJogo.css";
 
 function AdicionarConfronto() {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
-  const [times, setTimes] =
-    useState([]);
+  const [times, setTimes] = useState([]);
 
-  const [time1, setTime1] =
-    useState("");
+  const [time1, setTime1] = useState("");
 
-  const [time2, setTime2] =
-    useState("");
+  const [time2, setTime2] = useState("");
 
-  const [horario, setHorario] =
-    useState("");
+  const [horario, setHorario] = useState("");
 
-  const [
-    modalidadeId,
-    setModalidadeId,
-  ] = useState("");
+  const [modalidadeId, setModalidadeId] = useState("");
 
-  const [
-    modalidades,
-    setModalidades,
-  ] = useState([]);
+  const [modalidades, setModalidades] = useState([]);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [erro, setErro] =
-    useState("");
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
-    const carregarDados =
-      async () => {
-        const {
-          data: modData,
-          error: modError,
-        } = await supabase
-          .from("modalidade")
-          .select(
-            "id, nome, genero"
-          )
-          .order("nome");
+    const carregarDados = async () => {
+      const { data: modData, error: modError } = await supabase
+        .from("modalidade")
+        .select("id, nome, genero")
+        .order("nome");
 
-        if (modError) {
-          console.error(
-            modError
-          );
-          setErro(
-            "Erro ao carregar modalidades."
-          );
-          return;
-        }
+      if (modError) {
+        console.error(modError);
+        setErro("Erro ao carregar modalidades.");
+        return;
+      }
 
-        setModalidades(
-          modData || []
-        );
+      setModalidades(modData || []);
 
-        const {
-          data: timeData,
-          error: timeError,
-        } = await supabase
-          .from("time")
-          .select(
-            "id, Nome, id_modalidade"
-          )
-          .order("Nome");
+      const { data: timeData, error: timeError } = await supabase
+        .from("time")
+        .select("id, Nome, id_modalidade")
+        .order("Nome");
 
-        if (timeError) {
-          console.error(
-            timeError
-          );
-          setErro(
-            "Erro ao carregar times."
-          );
-          return;
-        }
+      if (timeError) {
+        console.error(timeError);
+        setErro("Erro ao carregar times.");
+        return;
+      }
 
-        setTimes(
-          timeData || []
-        );
-      };
+      setTimes(timeData || []);
+    };
 
     carregarDados();
   }, []);
 
-  const handleSalvarConfronto =
-    async (e) => {
-      e.preventDefault();
+  const handleSalvarConfronto = async (e) => {
+    e.preventDefault();
 
-      setErro("");
+    setErro("");
 
-      if (
-        !time1 ||
-        !time2 ||
-        !horario ||
-        !modalidadeId
-      ) {
-        setErro(
-          "Preencha todos os campos obrigatórios."
-        );
-        return;
+    if (!time1 || !time2 || !horario || !modalidadeId) {
+      setErro("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    if (time1 === time2) {
+      setErro("O time 1 não pode ser igual ao time 2.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.from("confronto").insert({
+        time1: time1,
+        time2: time2,
+        horario: horario,
+        finalizado: false,
+      });
+
+      if (error) {
+        throw error;
       }
 
-      if (time1 === time2) {
-        setErro(
-          "O time 1 não pode ser igual ao time 2."
-        );
-        return;
-      }
+      navigate("/horarios");
+    } catch (err) {
+      console.error(err);
 
-      setLoading(true);
+      setErro("Erro ao salvar o confronto.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      try {
-        const {
-          error,
-        } = await supabase
-          .from("confronto")
-          .insert({
-            time1: time1,
-            time2: time2,
-            horario: horario,
-            finalizado: false,
-          });
-
-        if (error) {
-          throw error;
-        }
-
-        navigate(
-          "/horarios"
-        );
-
-      } catch (err) {
-        console.error(err);
-
-        setErro(
-          "Erro ao salvar o confronto."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-  const timesFiltrados =
-    times.filter(
-      (time) =>
-        !modalidadeId ||
-        String(
-          time.id_modalidade
-        ) ===
-          String(
-            modalidadeId
-          )
-    );
+  const timesFiltrados = times.filter(
+    (time) =>
+      !modalidadeId || String(time.id_modalidade) === String(modalidadeId),
+  );
 
   return (
     <div className="add-jogo-page">
-
       <div
         className="add-jogo-container"
         style={{
           maxWidth: "480px",
         }}
       >
-
         <div
           style={{
             display: "flex",
-            justifyContent:
-              "space-between",
+            justifyContent: "space-between",
             alignItems: "center",
             marginBottom: "24px",
           }}
@@ -194,9 +126,7 @@ function AdicionarConfronto() {
 
           <button
             type="button"
-            onClick={() =>
-              navigate(-1)
-            }
+            onClick={() => navigate(-1)}
             style={{
               background: "none",
               border: "none",
@@ -216,40 +146,25 @@ function AdicionarConfronto() {
             marginBottom: "16px",
           }}
         >
-          <label>
-            MODALIDADE
-          </label>
+          <label>MODALIDADE</label>
 
           <select
             value={modalidadeId}
             onChange={(e) => {
-              setModalidadeId(
-                e.target.value
-              );
+              setModalidadeId(e.target.value);
 
               setTime1("");
               setTime2("");
             }}
           >
-            <option value="">
-              Selecione...
-            </option>
+            <option value="">Selecione...</option>
 
-            {modalidades.map(
-              (m) => (
-                <option
-                  key={m.id}
-                  value={m.id}
-                >
-                  {m.nome}
-                  {m.genero &&
-                  m.genero !==
-                    "Not"
-                    ? ` (${m.genero})`
-                    : ""}
-                </option>
-              )
-            )}
+            {modalidades.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+                {m.genero && m.genero !== "Not" ? ` (${m.genero})` : ""}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -260,35 +175,20 @@ function AdicionarConfronto() {
             marginBottom: "16px",
           }}
         >
-          <label>
-            TIME 1
-          </label>
+          <label>TIME 1</label>
 
           <select
             value={time1}
-            onChange={(e) =>
-              setTime1(
-                e.target.value
-              )
-            }
-            disabled={
-              !modalidadeId
-            }
+            onChange={(e) => setTime1(e.target.value)}
+            disabled={!modalidadeId}
           >
-            <option value="">
-              Selecione o Time 1
-            </option>
+            <option value="">Selecione o Time 1</option>
 
-            {timesFiltrados.map(
-              (time) => (
-                <option
-                  key={time.id}
-                  value={time.id}
-                >
-                  {time.Nome}
-                </option>
-              )
-            )}
+            {timesFiltrados.map((time) => (
+              <option key={time.id} value={time.id}>
+                {time.Nome}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -299,43 +199,22 @@ function AdicionarConfronto() {
             marginBottom: "16px",
           }}
         >
-          <label>
-            TIME 2
-          </label>
+          <label>TIME 2</label>
 
           <select
             value={time2}
-            onChange={(e) =>
-              setTime2(
-                e.target.value
-              )
-            }
-            disabled={
-              !modalidadeId
-            }
+            onChange={(e) => setTime2(e.target.value)}
+            disabled={!modalidadeId}
           >
-            <option value="">
-              Selecione o Time 2
-            </option>
+            <option value="">Selecione o Time 2</option>
 
             {timesFiltrados
-              .filter(
-                (time) =>
-                  String(
-                    time.id
-                  ) !==
-                  String(time1)
-              )
-              .map(
-                (time) => (
-                  <option
-                    key={time.id}
-                    value={time.id}
-                  >
-                    {time.Nome}
-                  </option>
-                )
-              )}
+              .filter((time) => String(time.id) !== String(time1))
+              .map((time) => (
+                <option key={time.id} value={time.id}>
+                  {time.Nome}
+                </option>
+              ))}
           </select>
         </div>
 
@@ -346,18 +225,12 @@ function AdicionarConfronto() {
             marginBottom: "24px",
           }}
         >
-          <label>
-            HORÁRIO DO JOGO
-          </label>
+          <label>HORÁRIO DO JOGO</label>
 
           <input
             type="datetime-local"
             value={horario}
-            onChange={(e) =>
-              setHorario(
-                e.target.value
-              )
-            }
+            onChange={(e) => setHorario(e.target.value)}
           />
         </div>
 
@@ -376,22 +249,16 @@ function AdicionarConfronto() {
 
         <button
           type="button"
-          onClick={
-            handleSalvarConfronto
-          }
+          onClick={handleSalvarConfronto}
           disabled={loading}
           className="btn-salvar-principal"
           style={{
             width: "100%",
-            opacity:
-              loading ? 0.7 : 1,
+            opacity: loading ? 0.7 : 1,
           }}
         >
-          {loading
-            ? "Salvando..."
-            : "Salvar Confronto"}
+          {loading ? "Salvando..." : "Salvar Confronto"}
         </button>
-
       </div>
     </div>
   );

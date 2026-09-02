@@ -28,7 +28,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Visitante />} />
 
-        <Route path="/Administrativo" element={<Administrativo />} />
+      
 
         <Route path="/Horarios" element={<Horarios />} />
 
