@@ -5,7 +5,7 @@ import { supabase } from "../supabaseClient";
 
 const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  { eager: true }
+  { eager: true },
 );
 
 const BANDEIRAS = {};
@@ -19,7 +19,7 @@ function ModalidadeFiltro() {
   const { nomeModalidade } = useParams();
 
   const modalidadeAtual = decodeURIComponent(
-    nomeModalidade || ""
+    nomeModalidade || "",
   ).toUpperCase();
 
   const possuiGenero =
@@ -61,7 +61,7 @@ function ModalidadeFiltro() {
                 Nome,
                 logo_URL
               )
-            `
+            `,
           )
           .eq("finalizado", false);
 
@@ -117,7 +117,10 @@ function ModalidadeFiltro() {
 
   return (
     <div className="horarios-page">
-      <div className="horarios-titulo-container" style={{ marginBottom: "20px" }}>
+      <div
+        className="horarios-titulo-container"
+        style={{ marginBottom: "20px" }}
+      >
         <h1 className="horarios-titulo">Horários de Início</h1>
         <h2 className="horarios-subtitulo">{modalidadeAtual}</h2>
       </div>
