@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { supabase } from "../supabaseClient"; // ajuste o caminho se necessário
+import { supabase } from "../supabaseClient"; 
 import "../css/Horarios.css";
 
-// Lista local de bandeiras (coloque os nomes exatos dos times)
+
 const BANDEIRAS = {
-  // Exemplo:
-  // "Colégio São José": "🟢",
-  // "Escola Municipal": "🔵",
+  
 };
 
 const PAGE_SIZE = 10;
@@ -88,12 +86,10 @@ function Horarios() {
     }
   }, []);
 
-  // Carrega a primeira página
   useEffect(() => {
     fetchJogos(0);
   }, [fetchJogos]);
 
-  // Infinite Scroll
   useEffect(() => {
     if (!hasMore || loading) return;
 

@@ -6,7 +6,7 @@ function Historico() {
   const [jogosFinalizados, setJogosFinalizados] = useState([]);
 
   useEffect(() => {
-    // Exibe somente confrontos com status "finalizado"
+   
     const finalizados = MOCK_JOGOS.filter((jogo) => jogo.status === "finalizado");
     setJogosFinalizados(finalizados);
   }, []);
