@@ -219,3 +219,12 @@
 .genero-toggle.feminino .genero-opcao:last-of-type {
   color: #000;
 }
+
+.horarios-subtitulo {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #a0aec0;
+  margin-top: 4px;
+  margin-bottom: 0;
+  letter-spacing: 0.5px;
+}
