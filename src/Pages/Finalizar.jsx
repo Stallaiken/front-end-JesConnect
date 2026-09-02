@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { supabase } from "../supabaseClient";
 import "../css/Finalizar.css";
@@ -11,64 +8,47 @@ const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
   {
     eager: true,
-  }
+  },
 );
 
 const BANDEIRAS = {};
 
 for (const path in bandeirasModules) {
-  const fileName = path
-    .split("/")
-    .pop()
-    .split(".")[0];
+  const fileName = path.split("/").pop().split(".")[0];
 
-  BANDEIRAS[fileName] =
-    bandeirasModules[path].default;
+  BANDEIRAS[fileName] = bandeirasModules[path].default;
 }
 
 function Finalizar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const jogo =
-    location.state?.jogo;
+  const jogo = location.state?.jogo;
 
-  const [gols1, setGols1] =
-    useState(0);
+  const [gols1, setGols1] = useState(0);
 
-  const [gols2, setGols2] =
-    useState(0);
+  const [gols2, setGols2] = useState(0);
 
-  const [amarelos1, setAmarelos1] =
-    useState(0);
+  const [amarelos1, setAmarelos1] = useState(0);
 
-  const [amarelos2, setAmarelos2] =
-    useState(0);
+  const [amarelos2, setAmarelos2] = useState(0);
 
-  const [vermelhos1, setVermelhos1] =
-    useState(0);
+  const [vermelhos1, setVermelhos1] = useState(0);
 
-  const [vermelhos2, setVermelhos2] =
-    useState(0);
+  const [vermelhos2, setVermelhos2] = useState(0);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [erro, setErro] =
-    useState("");
+  const [erro, setErro] = useState("");
 
   if (!jogo) {
     return (
       <div className="finalizar-page">
-        <p>
-          Nenhum jogo selecionado.
-        </p>
+        <p>Nenhum jogo selecionado.</p>
 
         <button
           className="btn-editar-estatisticas"
-          onClick={() =>
-            navigate("/Horarios")
-          }
+          onClick={() => navigate("/Horarios")}
         >
           Voltar para Horários
         </button>
@@ -76,246 +56,150 @@ function Finalizar() {
     );
   }
 
-  const time1 =
-    jogo.time1 || {};
+  const time1 = jogo.time1 || {};
 
-  const time2 =
-    jogo.time2 || {};
+  const time2 = jogo.time2 || {};
 
-  const getBandeira = (
-    logoURL
-  ) => {
+  const getBandeira = (logoURL) => {
     if (!logoURL) return null;
 
-    return (
-      BANDEIRAS[logoURL] ||
-      null
-    );
+    return BANDEIRAS[logoURL] || null;
   };
 
-  const alterarValor = (
-    setter,
-    delta
-  ) => {
-    setter((valor) =>
-      Math.max(
-        0,
-        Number(valor) + delta
-      )
-    );
+  const alterarValor = (setter, delta) => {
+    setter((valor) => Math.max(0, Number(valor) + delta));
   };
 
-  const handleFinalizarJogo =
-    async () => {
+  const handleFinalizarJogo = async () => {
+    setLoading(true);
+    setErro("");
 
-      setLoading(true);
-      setErro("");
+    try {
+      const pontuacao = [
+        Number(gols1),
+        Number(gols2),
+        Number(amarelos1),
+        Number(amarelos2),
+        Number(vermelhos1),
+        Number(vermelhos2),
+      ];
 
-      try {
+      const { data: detalheExistente, error: erroBusca } = await supabase
+        .from("detalhes")
+        .select("id")
+        .eq("confronto_id", jogo.id)
+        .maybeSingle();
 
-        // ================================================
-        // SALVA OS DADOS NA TABELA DETALHES
-        //
-        // [gols1, gols2,
-        //  amarelos1, amarelos2,
-        //  vermelhos1, vermelhos2]
-        // ================================================
-
-        const pontuacao = [
-          Number(gols1),
-          Number(gols2),
-          Number(amarelos1),
-          Number(amarelos2),
-          Number(vermelhos1),
-          Number(vermelhos2),
-        ];
-
-        const {
-          data: detalheExistente,
-          error: erroBusca,
-        } = await supabase
-          .from("detalhes")
-          .select("id")
-          .eq(
-            "confronto_id",
-            jogo.id
-          )
-          .maybeSingle();
-
-        if (erroBusca) {
-          throw erroBusca;
-        }
-
-        if (detalheExistente) {
-
-          const {
-            error,
-          } = await supabase
-            .from("detalhes")
-            .update({
-              pontuacao,
-            })
-            .eq(
-              "confronto_id",
-              jogo.id
-            );
-
-          if (error) {
-            throw error;
-          }
-
-        } else {
-
-          const {
-            error,
-          } = await supabase
-            .from("detalhes")
-            .insert({
-              confronto_id: jogo.id,
-              pontuacao,
-            });
-
-          if (error) {
-            throw error;
-          }
-        }
-
-        // ================================================
-        // FINALIZA O CONFRONTO
-        // ================================================
-
-        const {
-          error: erroConfronto,
-        } = await supabase
-          .from("confronto")
-          .update({
-            finalizado: true,
-          })
-          .eq(
-            "id",
-            jogo.id
-          );
-
-        if (erroConfronto) {
-          throw erroConfronto;
-        }
-
-        navigate("/Historico");
-
-      } catch (err) {
-
-        console.error(
-          "Erro ao finalizar:",
-          err
-        );
-
-        setErro(
-          "Erro ao salvar os dados da partida."
-        );
-
-      } finally {
-        setLoading(false);
+      if (erroBusca) {
+        throw erroBusca;
       }
-    };
+
+      if (detalheExistente) {
+        const { error } = await supabase
+          .from("detalhes")
+          .update({
+            pontuacao,
+          })
+          .eq("confronto_id", jogo.id);
+
+        if (error) {
+          throw error;
+        }
+      } else {
+        const { error } = await supabase.from("detalhes").insert({
+          confronto_id: jogo.id,
+          pontuacao,
+        });
+
+        if (error) {
+          throw error;
+        }
+      }
+
+      // ================================================
+      // FINALIZA O CONFRONTO
+      // ================================================
+
+      const { error: erroConfronto } = await supabase
+        .from("confronto")
+        .update({
+          finalizado: true,
+        })
+        .eq("id", jogo.id);
+
+      if (erroConfronto) {
+        throw erroConfronto;
+      }
+
+      navigate("/Historico");
+    } catch (err) {
+      console.error("Erro ao finalizar:", err);
+
+      setErro("Erro ao salvar os dados da partida.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="finalizar-page">
-
       <div className="finalizar-container">
-
         <button
           className="btn-fechar-finalizar"
-          onClick={() =>
-            navigate("/Horarios")
-          }
+          onClick={() => navigate("/Horarios")}
         >
           ✕
         </button>
 
-        <h2 className="titulo-finalizar">
-          FINALIZAR PARTIDA
-        </h2>
+        <h2 className="titulo-finalizar">FINALIZAR PARTIDA</h2>
 
         {/* TIMES */}
 
         <div className="card-finalizar">
-
           <div className="card-finalizar-header">
-
             <span className="modalidade-finalizar">
-              {
-                time1.modalidade
-                  ?.nome ||
-                "MODALIDADE"
-              }
+              {time1.modalidade?.nome || "MODALIDADE"}
             </span>
 
-            <div className="status-pill-finalizar">
-              EM ANDAMENTO
-            </div>
-
+            <div className="status-pill-finalizar">EM ANDAMENTO</div>
           </div>
 
           <div className="times-finalizar-wrapper">
-
             {/* TIME 1 */}
 
             <div className="time-finalizar-item">
-
               <div className="bandeira-box-finalizar">
-
-                {getBandeira(
-                  time1.logo_URL
-                ) && (
+                {getBandeira(time1.logo_URL) && (
                   <img
-                    src={getBandeira(
-                      time1.logo_URL
-                    )}
-                    alt={
-                      time1.Nome
-                    }
+                    src={getBandeira(time1.logo_URL)}
+                    alt={time1.Nome}
                     className="bandeira-img-finalizar"
                   />
                 )}
-
               </div>
 
               <span className="label-time-finalizar">
-                {time1.Nome ||
-                  "Time 1"}
+                {time1.Nome || "Time 1"}
               </span>
-
             </div>
 
             {/* TIME 2 */}
 
             <div className="time-finalizar-item">
-
               <div className="bandeira-box-finalizar">
-
-                {getBandeira(
-                  time2.logo_URL
-                ) && (
+                {getBandeira(time2.logo_URL) && (
                   <img
-                    src={getBandeira(
-                      time2.logo_URL
-                    )}
-                    alt={
-                      time2.Nome
-                    }
+                    src={getBandeira(time2.logo_URL)}
+                    alt={time2.Nome}
                     className="bandeira-img-finalizar"
                   />
                 )}
-
               </div>
 
               <span className="label-time-finalizar">
-                {time2.Nome ||
-                  "Time 2"}
+                {time2.Nome || "Time 2"}
               </span>
-
             </div>
-
           </div>
         </div>
 
@@ -330,63 +214,37 @@ function Finalizar() {
         </div>
 
         <div className="controles-placar-container">
-
           <div className="grupo-botoes-placar">
-
             <button
               className="btn-placar"
-              onClick={() =>
-                alterarValor(
-                  setGols1,
-                  1
-                )
-              }
+              onClick={() => alterarValor(setGols1, 1)}
             >
               +
             </button>
 
             <button
               className="btn-placar"
-              onClick={() =>
-                alterarValor(
-                  setGols1,
-                  -1
-                )
-              }
+              onClick={() => alterarValor(setGols1, -1)}
             >
               -
             </button>
-
           </div>
 
           <div className="grupo-botoes-placar">
-
             <button
               className="btn-placar"
-              onClick={() =>
-                alterarValor(
-                  setGols2,
-                  1
-                )
-              }
+              onClick={() => alterarValor(setGols2, 1)}
             >
               +
             </button>
 
             <button
               className="btn-placar"
-              onClick={() =>
-                alterarValor(
-                  setGols2,
-                  -1
-                )
-              }
+              onClick={() => alterarValor(setGols2, -1)}
             >
               -
             </button>
-
           </div>
-
         </div>
 
         {/* ==================================================
@@ -403,22 +261,10 @@ function Finalizar() {
             marginBottom: "20px",
           }}
         >
-
           <div>
-            <p>
-              {time1.Nome}
-            </p>
+            <p>{time1.Nome}</p>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setAmarelos1,
-                  1
-                )
-              }
-            >
-              +
-            </button>
+            <button onClick={() => alterarValor(setAmarelos1, 1)}>+</button>
 
             <strong
               style={{
@@ -428,33 +274,13 @@ function Finalizar() {
               {amarelos1}
             </strong>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setAmarelos1,
-                  -1
-                )
-              }
-            >
-              -
-            </button>
+            <button onClick={() => alterarValor(setAmarelos1, -1)}>-</button>
           </div>
 
           <div>
-            <p>
-              {time2.Nome}
-            </p>
+            <p>{time2.Nome}</p>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setAmarelos2,
-                  1
-                )
-              }
-            >
-              +
-            </button>
+            <button onClick={() => alterarValor(setAmarelos2, 1)}>+</button>
 
             <strong
               style={{
@@ -464,18 +290,8 @@ function Finalizar() {
               {amarelos2}
             </strong>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setAmarelos2,
-                  -1
-                )
-              }
-            >
-              -
-            </button>
+            <button onClick={() => alterarValor(setAmarelos2, -1)}>-</button>
           </div>
-
         </div>
 
         <h3>Cartões Vermelhos</h3>
@@ -488,22 +304,10 @@ function Finalizar() {
             marginBottom: "20px",
           }}
         >
-
           <div>
-            <p>
-              {time1.Nome}
-            </p>
+            <p>{time1.Nome}</p>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setVermelhos1,
-                  1
-                )
-              }
-            >
-              +
-            </button>
+            <button onClick={() => alterarValor(setVermelhos1, 1)}>+</button>
 
             <strong
               style={{
@@ -513,33 +317,13 @@ function Finalizar() {
               {vermelhos1}
             </strong>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setVermelhos1,
-                  -1
-                )
-              }
-            >
-              -
-            </button>
+            <button onClick={() => alterarValor(setVermelhos1, -1)}>-</button>
           </div>
 
           <div>
-            <p>
-              {time2.Nome}
-            </p>
+            <p>{time2.Nome}</p>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setVermelhos2,
-                  1
-                )
-              }
-            >
-              +
-            </button>
+            <button onClick={() => alterarValor(setVermelhos2, 1)}>+</button>
 
             <strong
               style={{
@@ -549,18 +333,8 @@ function Finalizar() {
               {vermelhos2}
             </strong>
 
-            <button
-              onClick={() =>
-                alterarValor(
-                  setVermelhos2,
-                  -1
-                )
-              }
-            >
-              -
-            </button>
+            <button onClick={() => alterarValor(setVermelhos2, -1)}>-</button>
           </div>
-
         </div>
 
         {erro && (
@@ -579,11 +353,8 @@ function Finalizar() {
           onClick={handleFinalizarJogo}
           disabled={loading}
         >
-          {loading
-            ? "SALVANDO..."
-            : "FINALIZAR E SALVAR"}
+          {loading ? "SALVANDO..." : "FINALIZAR E SALVAR"}
         </button>
-
       </div>
     </div>
   );

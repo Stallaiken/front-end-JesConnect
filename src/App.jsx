@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
@@ -11,10 +10,8 @@ import Visitante from "./Pages/Visitante.jsx";
 import Horarios from "./Pages/Horarios.jsx";
 import Historico from "./Pages/Historico.jsx";
 import Ranking from "./Pages/Ranking.jsx";
-import Chaveamento from "./Pages/Chaveamento.jsx";
 
 import AdicionarJogo from "./Pages/AdicionarJogo.jsx";
-import AdicionarTime from "./Pages/adicionarTime.jsx";
 import EditarTime from "./Pages/EditarTime.jsx";
 import Finalizar from "./Pages/Finalizar.jsx";
 import ModalidadeFiltro from "./Pages/modalidadeFiltros.jsx";
@@ -26,9 +23,7 @@ function App() {
     <>
       <Menu aoAbrir={setMenuAberto} />
 
-      {MenuAberto && (
-        <MenuFilho aoAbrir={setMenuAberto} />
-      )}
+      {MenuAberto && <MenuFilho aoAbrir={setMenuAberto} />}
 
       <Routes>
         <Route path="/" element={<Visitante />} />
@@ -46,29 +41,12 @@ function App() {
 
         <Route path="/Ranking" element={<Ranking />} />
 
-        {/* NOVO */}
-        <Route path="/Chaveamento" element={<Chaveamento />} />
-
         {/* Área administrativa */}
-        <Route
-          path="/adicionar-jogo"
-          element={<AdicionarJogo />}
-        />
+        <Route path="/adicionar-jogo" element={<AdicionarJogo />} />
 
-        <Route
-          path="/Adicionar-time"
-          element={<AdicionarTime />}
-        />
+        <Route path="/editar-time" element={<EditarTime />} />
 
-        <Route
-          path="/editar-time"
-          element={<EditarTime />}
-        />
-
-        <Route
-          path="/Finalizar"
-          element={<Finalizar />}
-        />
+        <Route path="/Finalizar" element={<Finalizar />} />
 
         <Route path="*" element={<Erro404 />} />
       </Routes>
@@ -77,4 +55,3 @@ function App() {
 }
 
 export default App;
-
