@@ -10,7 +10,7 @@ const bandeirasModules = import.meta.glob(
     eager: true,
   },
 );
-
+const BANDEIRAS = {};
 for (const path in bandeirasModules) {
   const fileName = path.split("/").pop().split(".")[0];
 
