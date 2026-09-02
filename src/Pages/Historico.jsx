@@ -2,129 +2,349 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "../css/Horarios.css";
 
+const bandeirasModules = import.meta.glob(
+  "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
+  {
+    eager: true,
+  }
+);
 
-const bandeirasModules = import.meta.glob("../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}", { eager: true });
 const BANDEIRAS = {};
+
 for (const path in bandeirasModules) {
-  const fileName = path.split("/").pop().split(".")[0];
-  BANDEIRAS[fileName] = bandeirasModules[path].default;
+  const fileName = path
+    .split("/")
+    .pop()
+    .split(".")[0];
+
+  BANDEIRAS[fileName] =
+    bandeirasModules[path].default;
 }
 
 function Historico() {
-  const [jogos, setJogos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [historico, setHistorico] =
+    useState([]);
+
+  const [detalheModal, setDetalheModal] =
+    useState(null);
 
   useEffect(() => {
-    const fetchHistorico = async () => {
-      const { data, error } = await supabase
-        .from("confronto")
-        .select(`
-          id,
-          horario,
-          finalizado,
-          time1 (
-            id,
-            Nome,
-            logo_URL,
-            modalidade:id_modalidade ( nome )
-          ),
-          time2 (
-            id,
-            Nome,
-            logo_URL
-          ),
-          detalhes ( pontuacao )
-        `)
-        .eq("finalizado", true)
-        .order("horario", { ascending: false });
+    const carregarHistorico =
+      async () => {
 
-      if (error) {
-        console.error("Erro ao carregar histórico:", error);
-      } else {
-        setJogos(data || []);
-      }
-      setLoading(false);
-    };
+        const {
+          data,
+          error,
+        } = await supabase
+          .from("confronto")
+          .select(`
+            id,
+            horario,
+            finalizado,
 
-    fetchHistorico();
+            time1:time1 (
+              Nome,
+              logo_URL
+            ),
+
+            time2:time2 (
+              Nome,
+              logo_URL
+            ),
+
+            detalhes:detalhes (
+              pontuacao
+            )
+          `)
+          .eq(
+            "finalizado",
+            true
+          )
+          .order(
+            "horario",
+            {
+              ascending: false,
+            }
+          );
+
+        if (error) {
+          console.error(
+            "Erro histórico:",
+            error
+          );
+          return;
+        }
+
+        setHistorico(
+          data || []
+        );
+      };
+
+    carregarHistorico();
   }, []);
 
-  const getBandeira = (logoURL) => {
-    if (!logoURL) return null;
-    return BANDEIRAS[logoURL] || null;
+  const pegarPontuacao = (
+    jogo
+  ) => {
+    if (
+      !jogo.detalhes ||
+      jogo.detalhes.length === 0
+    ) {
+      return [0, 0, 0, 0, 0, 0];
+    }
+
+    return (
+      jogo.detalhes[0]
+        ?.pontuacao ||
+      [0, 0, 0, 0, 0, 0]
+    );
   };
 
-  const formatarHorario = (horario) => {
-    if (!horario) return "--:--";
-    return new Date(horario).toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const getBandeira = (
+    logoURL
+  ) => {
+    if (!logoURL) return null;
+
+    return (
+      BANDEIRAS[logoURL] ||
+      null
+    );
   };
 
   return (
     <div className="horarios-page">
+
       <div className="horarios-titulo-container">
-        <h1 className="horarios-titulo">HISTÓRICO DE JOGOS</h1>
+
+        <h1 className="horarios-titulo">
+          Histórico de Partidas
+        </h1>
+
+        <p className="horarios-subtitulo">
+          Partidas Finalizadas
+        </p>
+
       </div>
 
       <div className="lista-confrontos">
-        {loading ? (
-          <p className="horarios-mensagem-vazia">Carregando...</p>
-        ) : jogos.length === 0 ? (
+
+        {historico.length === 0 ? (
           <p className="horarios-mensagem-vazia">
-            Nenhum jogo finalizado até o momento.
+            Nenhuma partida finalizada ainda.
           </p>
         ) : (
-          jogos.map((jogo) => {
-            const placar = jogo.detalhes?.[0]?.pontuacao || [0, 0];
+
+          historico.map((jogo) => {
+
+            const pontuacao =
+              pegarPontuacao(
+                jogo
+              );
+
+            const gols1 =
+              pontuacao[0] || 0;
+
+            const gols2 =
+              pontuacao[1] || 0;
+
+            const bandeira1 =
+              getBandeira(
+                jogo.time1?.logo_URL
+              );
+
+            const bandeira2 =
+              getBandeira(
+                jogo.time2?.logo_URL
+              );
 
             return (
-              <div key={jogo.id} className="card-confronto">
-                <span className="modalidade-titulo">
-                  {jogo.time1?.modalidade?.nome || "Modalidade"}
-                </span>
+              <div
+                key={jogo.id}
+                className="card-confronto card-editavel"
+                onClick={() =>
+                  setDetalheModal(
+                    jogo
+                  )
+                }
+              >
 
                 <div className="conteudo-confronto">
-                  <div className="time-box">
-                    <div className="bandeira-container">
-                      {getBandeira(jogo.time1?.logo_URL) ? (
-                        <img
-                          src={getBandeira(jogo.time1?.logo_URL)}
-                          alt={jogo.time1?.Nome}
-                          className="bandeira-img"
-                        />
-                      ) : (
-                        <span className="bandeira-fallback">🏳️</span>
-                      )}
-                    </div>
-                    <span className="nome-time">{jogo.time1?.Nome || "Time 1"}</span>
-                  </div>
-
-                  <div className="horario-pill placar-pill">
-                    {placar[0] ?? 0} - {placar[1] ?? 0}
-                  </div>
 
                   <div className="time-box">
+
                     <div className="bandeira-container">
-                      {getBandeira(jogo.time2?.logo_URL) ? (
+
+                      {bandeira1 && (
                         <img
-                          src={getBandeira(jogo.time2?.logo_URL)}
-                          alt={jogo.time2?.Nome}
+                          src={bandeira1}
+                          alt={
+                            jogo.time1?.Nome
+                          }
                           className="bandeira-img"
                         />
-                      ) : (
-                        <span className="bandeira-fallback">🏳️</span>
                       )}
+
                     </div>
-                    <span className="nome-time">{jogo.time2?.Nome || "Time 2"}</span>
+
+                    <span className="nome-time">
+                      {
+                        jogo.time1?.Nome
+                      }
+                    </span>
+
                   </div>
+
+                  <div
+                    className="horario-pill"
+                    style={{
+                      backgroundColor:
+                        "#222",
+                    }}
+                  >
+                    {gols1} X {gols2}
+                  </div>
+
+                  <div className="time-box">
+
+                    <div className="bandeira-container">
+
+                      {bandeira2 && (
+                        <img
+                          src={bandeira2}
+                          alt={
+                            jogo.time2?.Nome
+                          }
+                          className="bandeira-img"
+                        />
+                      )}
+
+                    </div>
+
+                    <span className="nome-time">
+                      {
+                        jogo.time2?.Nome
+                      }
+                    </span>
+
+                  </div>
+
                 </div>
+
               </div>
             );
           })
         )}
+
       </div>
+
+      {/* ==================================================
+          MODAL
+      ================================================== */}
+
+      {detalheModal && (() => {
+
+        const pontuacao =
+          pegarPontuacao(
+            detalheModal
+          );
+
+        return (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor:
+                "rgba(0,0,0,0.6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent:
+                "center",
+              zIndex: 1100,
+              padding: "16px",
+            }}
+          >
+
+            <div
+              style={{
+                backgroundColor:
+                  "#000",
+                color: "#fff",
+                padding: "24px",
+                borderRadius:
+                  "20px",
+                width: "100%",
+                maxWidth:
+                  "400px",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <h3
+                style={{
+                  color: "#1b52e0",
+                  marginTop: 0,
+                }}
+              >
+                Detalhes da Partida
+              </h3>
+
+              <p>
+                <b>Placar:</b>{" "}
+                {detalheModal
+                  .time1?.Nome}{" "}
+                {pontuacao[0] || 0}
+                {" x "}
+                {pontuacao[1] || 0}{" "}
+                {detalheModal
+                  .time2?.Nome}
+              </p>
+
+              <p>
+                <b>
+                  Cartões Amarelos:
+                </b>{" "}
+                {pontuacao[2] || 0}
+                {" - "}
+                {pontuacao[3] || 0}
+              </p>
+
+              <p>
+                <b>
+                  Cartões Vermelhos:
+                </b>{" "}
+                {pontuacao[4] || 0}
+                {" - "}
+                {pontuacao[5] || 0}
+              </p>
+
+              <button
+                onClick={() =>
+                  setDetalheModal(
+                    null
+                  )
+                }
+                className="horario-pill"
+                style={{
+                  width: "100%",
+                  border: "none",
+                  cursor: "pointer",
+                  marginTop:
+                    "16px",
+                }}
+              >
+                Fechar
+              </button>
+
+            </div>
+          </div>
+        );
+
+      })()}
+
     </div>
   );
 }

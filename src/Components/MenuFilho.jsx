@@ -38,7 +38,7 @@ function MenuFilho({ aoAbrir }) {
           className="btn-menu-item"
           onClick={() => {
             aoAbrir(false);
-            navigate("/Futsete");
+            navigate("modalidade/Futset");
           }}
         >
           FUTSETE
@@ -47,7 +47,7 @@ function MenuFilho({ aoAbrir }) {
           className="btn-menu-item"
           onClick={() => {
             aoAbrir(false);
-            navigate("/Futsal");
+            navigate("/modalidade/Futsal");
           }}
         >
           FUTSAL
@@ -56,7 +56,7 @@ function MenuFilho({ aoAbrir }) {
           className="btn-menu-item"
           onClick={() => {
             aoAbrir(false);
-            navigate("/Queimado");
+            navigate("/modalidade/Queimado");
           }}
         >
           QUEIMADO
@@ -65,21 +65,19 @@ function MenuFilho({ aoAbrir }) {
           className="btn-menu-item"
           onClick={() => {
             aoAbrir(false);
-            navigate("/Vollei");
+            navigate("/modalidade/Volei");
           }}
         >
           VOLLEI
         </button>
       </nav>
       <a
-        className="btn-menu-item"
-        href="/regulamento-jes-2026.pdf"
-        download="Regulamento-JES-2026.pdf"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Baixar Regulamento
-      </a>
+  className="btn-menu-item"
+  href="/regulamento-jes-2026.pdf"
+  download="Regulamento-JES-2026.pdf"
+>
+  Baixar Regulamento
+</a>
       <button
         className="Administrativo-menu"
         onClick={() => {

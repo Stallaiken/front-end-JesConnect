@@ -1,90 +1,202 @@
-import { useState, useEffect } from "react";
+import {
+  useState,
+  useEffect,
+} from "react";
+
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "../css/AdicionarJogo.css";
 
-// Carrega todas as bandeiras da pasta automaticamente
-const bandeirasModules = import.meta.glob(
-  "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  { eager: true }
-);
+function AdicionarConfronto() {
+  const navigate =
+    useNavigate();
 
-const BANDEIRAS = {};
-for (const path in bandeirasModules) {
-  const fileName = path.split("/").pop().split(".")[0];
-  BANDEIRAS[fileName] = bandeirasModules[path].default;
-}
+  const [times, setTimes] =
+    useState([]);
 
-function AdicionarTime() {
-  const navigate = useNavigate();
+  const [time1, setTime1] =
+    useState("");
 
-  const [nome, setNome] = useState("");
-  const [modalidadeId, setModalidadeId] = useState("");
-  const [bandeira, setBandeira] = useState("");
-  const [modalidades, setModalidades] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState("");
-  const [sucesso, setSucesso] = useState(false);
+  const [time2, setTime2] =
+    useState("");
+
+  const [horario, setHorario] =
+    useState("");
+
+  const [
+    modalidadeId,
+    setModalidadeId,
+  ] = useState("");
+
+  const [
+    modalidades,
+    setModalidades,
+  ] = useState([]);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [erro, setErro] =
+    useState("");
 
   useEffect(() => {
-    const carregarModalidades = async () => {
-      const { data } = await supabase
-        .from("modalidade")
-        .select("id, nome, genero")
-        .order("nome");
-      if (data) setModalidades(data);
-    };
-    carregarModalidades();
+    const carregarDados =
+      async () => {
+        const {
+          data: modData,
+          error: modError,
+        } = await supabase
+          .from("modalidade")
+          .select(
+            "id, nome, genero"
+          )
+          .order("nome");
+
+        if (modError) {
+          console.error(
+            modError
+          );
+          setErro(
+            "Erro ao carregar modalidades."
+          );
+          return;
+        }
+
+        setModalidades(
+          modData || []
+        );
+
+        const {
+          data: timeData,
+          error: timeError,
+        } = await supabase
+          .from("time")
+          .select(
+            "id, Nome, id_modalidade"
+          )
+          .order("Nome");
+
+        if (timeError) {
+          console.error(
+            timeError
+          );
+          setErro(
+            "Erro ao carregar times."
+          );
+          return;
+        }
+
+        setTimes(
+          timeData || []
+        );
+      };
+
+    carregarDados();
   }, []);
 
-  const handleSalvar = async (e) => {
-    e.preventDefault();
-    setErro("");
-    setSucesso(false);
+  const handleSalvarConfronto =
+    async (e) => {
+      e.preventDefault();
 
-    if (!nome.trim()) {
-      setErro("Digite o nome do time");
-      return;
-    }
-    if (!modalidadeId) {
-      setErro("Selecione a modalidade");
-      return;
-    }
-    if (!bandeira) {
-      setErro("Escolha uma bandeira");
-      return;
-    }
+      setErro("");
 
-    setLoading(true);
+      if (
+        !time1 ||
+        !time2 ||
+        !horario ||
+        !modalidadeId
+      ) {
+        setErro(
+          "Preencha todos os campos obrigatórios."
+        );
+        return;
+      }
 
-    try {
-      const { error } = await supabase.from("time").insert({
-        Nome: nome.trim(),
-        id_modalidade: modalidadeId,
-        logo_URL: bandeira,
-      });
+      if (time1 === time2) {
+        setErro(
+          "O time 1 não pode ser igual ao time 2."
+        );
+        return;
+      }
 
-      if (error) throw error;
+      setLoading(true);
 
-      setSucesso(true);
-      setTimeout(() => navigate("/horarios"), 1200);
-    } catch (err) {
-      console.error(err);
-      setErro("Erro ao salvar. Esse nome de time já existe?");
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const {
+          error,
+        } = await supabase
+          .from("confronto")
+          .insert({
+            time1: time1,
+            time2: time2,
+            horario: horario,
+            finalizado: false,
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        navigate(
+          "/horarios"
+        );
+
+      } catch (err) {
+        console.error(err);
+
+        setErro(
+          "Erro ao salvar o confronto."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  const timesFiltrados =
+    times.filter(
+      (time) =>
+        !modalidadeId ||
+        String(
+          time.id_modalidade
+        ) ===
+          String(
+            modalidadeId
+          )
+    );
 
   return (
     <div className="add-jogo-page">
-      <div className="add-jogo-container" style={{ maxWidth: "480px" }}>
-        {/* Cabeçalho */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-          <h2 style={{ margin: 0, fontSize: "1.4rem" }}>Novo Time</h2>
+
+      <div
+        className="add-jogo-container"
+        style={{
+          maxWidth: "480px",
+        }}
+      >
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent:
+              "space-between",
+            alignItems: "center",
+            marginBottom: "24px",
+          }}
+        >
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "1.4rem",
+            }}
+          >
+            Novo Confronto
+          </h2>
+
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={() =>
+              navigate(-1)
+            }
             style={{
               background: "none",
               border: "none",
@@ -97,161 +209,192 @@ function AdicionarTime() {
           </button>
         </div>
 
-        {/* Prévia do Time */}
+        {/* MODALIDADE */}
         <div
+          className="input-card config-card"
           style={{
-            background: "#f8fafc",
-            borderRadius: "16px",
-            padding: "20px",
-            marginBottom: "28px",
-            border: "1px solid #e2e8f0",
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
+            marginBottom: "16px",
           }}
         >
-          <div
-            style={{
-              width: "64px",
-              height: "44px",
-              borderRadius: "8px",
-              overflow: "hidden",
-              background: "#e2e8f0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            {bandeira && BANDEIRAS[bandeira] ? (
-              <img
-                src={BANDEIRAS[bandeira]}
-                alt="bandeira"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
-              <span style={{ fontSize: "24px" }}>🏳️</span>
-            )}
-          </div>
+          <label>
+            MODALIDADE
+          </label>
 
-          <div style={{ overflow: "hidden" }}>
-            <div style={{ fontWeight: 700, fontSize: "1.1rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {nome || "Nome do Time"}
-            </div>
-            <div style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "2px" }}>
-              {modalidades.find((m) => m.id === modalidadeId)?.nome || "Modalidade"}
-            </div>
-          </div>
-        </div>
-
-        {/* Nome */}
-        <div className="input-card config-card" style={{ marginBottom: "16px" }}>
-          <label>NOME DO TIME</label>
-          <input
-            type="text"
-            placeholder="Ex: Colégio Santa Mônica"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            maxLength={40}
-          />
-        </div>
-
-        {/* Modalidade */}
-        <div className="input-card config-card" style={{ marginBottom: "24px" }}>
-          <label>MODALIDADE</label>
           <select
             value={modalidadeId}
-            onChange={(e) => setModalidadeId(e.target.value)}
+            onChange={(e) => {
+              setModalidadeId(
+                e.target.value
+              );
+
+              setTime1("");
+              setTime2("");
+            }}
           >
-            <option value="">Selecione...</option>
-            {modalidades.map((mod) => (
-              <option key={mod.id} value={mod.id}>
-                {mod.nome}
-                {mod.genero && mod.genero !== "Not" ? ` (${mod.genero})` : ""}
-              </option>
-            ))}
+            <option value="">
+              Selecione...
+            </option>
+
+            {modalidades.map(
+              (m) => (
+                <option
+                  key={m.id}
+                  value={m.id}
+                >
+                  {m.nome}
+                  {m.genero &&
+                  m.genero !==
+                    "Not"
+                    ? ` (${m.genero})`
+                    : ""}
+                </option>
+              )
+            )}
           </select>
         </div>
 
-        {/* Bandeiras */}
-        <div style={{ marginBottom: "28px" }}>
-          <label style={{ display: "block", fontWeight: 600, marginBottom: "12px", fontSize: "0.9rem" }}>
-            BANDEIRA
+        {/* TIME 1 */}
+        <div
+          className="input-card config-card"
+          style={{
+            marginBottom: "16px",
+          }}
+        >
+          <label>
+            TIME 1
           </label>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))",
-              gap: "10px",
-              maxHeight: "240px",
-              overflowY: "auto",
-              padding: "4px",
-            }}
+          <select
+            value={time1}
+            onChange={(e) =>
+              setTime1(
+                e.target.value
+              )
+            }
+            disabled={
+              !modalidadeId
+            }
           >
-            {Object.entries(BANDEIRAS).map(([key, src]) => {
-              const selecionada = bandeira === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setBandeira(key)}
-                  style={{
-                    border: selecionada ? "3px solid #2563eb" : "2px solid #e2e8f0",
-                    borderRadius: "12px",
-                    padding: "8px",
-                    background: selecionada ? "#eff6ff" : "white",
-                    cursor: "pointer",
-                    transition: "all 0.15s",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+            <option value="">
+              Selecione o Time 1
+            </option>
+
+            {timesFiltrados.map(
+              (time) => (
+                <option
+                  key={time.id}
+                  value={time.id}
                 >
-                  <img
-                    src={src}
-                    alt={key}
-                    style={{
-                      width: "48px",
-                      height: "32px",
-                      objectFit: "cover",
-                      borderRadius: "4px",
-                    }}
-                  />
-                </button>
-              );
-            })}
-          </div>
+                  {time.Nome}
+                </option>
+              )
+            )}
+          </select>
         </div>
 
-        {/* Mensagens */}
+        {/* TIME 2 */}
+        <div
+          className="input-card config-card"
+          style={{
+            marginBottom: "16px",
+          }}
+        >
+          <label>
+            TIME 2
+          </label>
+
+          <select
+            value={time2}
+            onChange={(e) =>
+              setTime2(
+                e.target.value
+              )
+            }
+            disabled={
+              !modalidadeId
+            }
+          >
+            <option value="">
+              Selecione o Time 2
+            </option>
+
+            {timesFiltrados
+              .filter(
+                (time) =>
+                  String(
+                    time.id
+                  ) !==
+                  String(time1)
+              )
+              .map(
+                (time) => (
+                  <option
+                    key={time.id}
+                    value={time.id}
+                  >
+                    {time.Nome}
+                  </option>
+                )
+              )}
+          </select>
+        </div>
+
+        {/* HORÁRIO */}
+        <div
+          className="input-card config-card"
+          style={{
+            marginBottom: "24px",
+          }}
+        >
+          <label>
+            HORÁRIO DO JOGO
+          </label>
+
+          <input
+            type="datetime-local"
+            value={horario}
+            onChange={(e) =>
+              setHorario(
+                e.target.value
+              )
+            }
+          />
+        </div>
+
         {erro && (
-          <p style={{ color: "#dc2626", textAlign: "center", marginBottom: "12px", fontSize: "0.9rem" }}>
+          <p
+            style={{
+              color: "#dc2626",
+              textAlign: "center",
+              marginBottom: "12px",
+              fontSize: "0.9rem",
+            }}
+          >
             {erro}
           </p>
         )}
-        {sucesso && (
-          <p style={{ color: "#16a34a", textAlign: "center", marginBottom: "12px", fontSize: "0.9rem" }}>
-            Time cadastrado com sucesso!
-          </p>
-        )}
 
-        {/* Botão Salvar */}
         <button
           type="button"
-          onClick={handleSalvar}
+          onClick={
+            handleSalvarConfronto
+          }
           disabled={loading}
           className="btn-salvar-principal"
           style={{
             width: "100%",
-            opacity: loading ? 0.7 : 1,
+            opacity:
+              loading ? 0.7 : 1,
           }}
         >
-          {loading ? "Salvando..." : "Salvar Time"}
+          {loading
+            ? "Salvando..."
+            : "Salvar Confronto"}
         </button>
+
       </div>
     </div>
   );
 }
 
-export default AdicionarTime;
+export default AdicionarConfronto;

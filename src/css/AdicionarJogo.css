@@ -8,13 +8,13 @@
   box-sizing: border-box;
 }
 
-.add-jogo-container,
-.salvar-container {
+.add-jogo-container {
   width: 100%;
   max-width: 360px;
   display: flex;
   flex-direction: column;
   position: relative;
+  padding-bottom: 90px;
 }
 
 .section-label {
@@ -32,26 +32,6 @@
   margin: 6px 0;
 }
 
-.configs-divider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 16px 0 12px 0;
-}
-
-.configs-divider span {
-  font-weight: 900;
-  font-size: 1rem;
-  color: #000000;
-}
-
-.configs-divider hr {
-  flex-grow: 1;
-  border: none;
-  border-top: 2px solid #000000;
-}
-
-/* Base dos Cards de Form */
 .input-card {
   background-color: #000000;
   color: #ffffff;
@@ -63,32 +43,19 @@
   margin-bottom: 10px;
 }
 
-.icon-box {
-  background-color: #ffffff;
-  border-radius: 12px;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-}
-
 .input-field-wrapper {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-.input-field-wrapper label,
-.config-card label {
+.input-field-wrapper label {
   font-size: 0.85rem;
   font-weight: 800;
 }
 
 .input-field-wrapper select,
-.config-card select,
-.config-card input {
+.input-field-wrapper input {
   background: transparent;
   border: none;
   border-bottom: 1px solid #ffffff;
@@ -99,105 +66,26 @@
   width: 100%;
 }
 
-.config-card select option,
 .input-field-wrapper select option {
   background-color: #000000;
   color: #ffffff;
 }
 
-.pencil-icon {
-  font-size: 1rem;
-}
-
 .btn-salvar-principal {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 360px;
+  z-index: 100;
   background-color: #1b52e0;
   color: #ffffff;
   border: none;
   border-radius: 20px;
   height: 48px;
-  width: 160px;
   font-size: 1.3rem;
   font-weight: bold;
-  align-self: center;
-  margin-top: 24px;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Estilos Específicos do SalvarJogo */
-.btn-fechar {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #1b52e0;
-  color: #ffffff;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.titulo-confirmacao {
-  font-size: 1.15rem;
-  font-weight: 900;
-  text-align: center;
-  margin-top: 50px;
-  letter-spacing: -0.5px;
-}
-
-.card-previa {
-  background-color: #000000;
-  border-radius: 20px;
-  padding: 16px;
-  color: #ffffff;
-  margin-bottom: 20px;
-}
-
-.modalidade-previa {
-  display: block;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin-bottom: 12px;
-}
-
-.conteudo-previa {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.time-previa {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.bandeira-box {
-  background-color: #ffffff;
-  border-radius: 10px;
-  width: 50px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-}
-
-.sub-label {
-  font-size: 0.75rem;
-  font-weight: 800;
-  margin-top: 4px;
-}
-
-.horario-pill-previa {
-  background-color: #1b52e0;
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(27, 82, 224, 0.4);
 }

@@ -28,10 +28,15 @@ function Administrativo() {
       }
 
       if (data === true) {
-        localStorage.setItem("isAdmin", "true");
-        localStorage.setItem("usuarioLogado", usuario);
-        navigate("/horarios");
-      } else {
+  localStorage.setItem("isAdmin", "true");
+  localStorage.setItem("usuarioLogado", usuario);
+
+  window.dispatchEvent(
+    new Event("admin-status-change")
+  );
+
+  navigate("/horarios");
+} else {
         setErro("Usuário ou senha incorretos.");
       }
     } catch (err) {
