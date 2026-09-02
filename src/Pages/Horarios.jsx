@@ -1,48 +1,139 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "../supabaseClient"; // ajuste o caminho se necessário
 import "../css/Horarios.css";
-import { MOCK_JOGOS } from "../utils/mockJogos";
+
+// Lista local de bandeiras (coloque os nomes exatos dos times)
+const BANDEIRAS = {
+  // Exemplo:
+  // "Colégio São José": "🟢",
+  // "Escola Municipal": "🔵",
+};
+
+const PAGE_SIZE = 10;
 
 function Horarios() {
-  const navigate = useNavigate();
-  const [generoFiltro, setGeneroFiltro] = useState("M");
-  const [modalidadeFiltro, setModalidadeFiltro] = useState("TODAS");
+  const [jogos, setJogos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+  const [erro, setErro] = useState(null);
+  const [jaCarregou, setJaCarregou] = useState(false);
 
-  // Filtra os jogos respeitando a regra de ocultar gênero em FUTSETE/FUTSAL
-  const jogosFiltrados = MOCK_JOGOS.filter((jogo) => {
-    if (jogo.status !== "em espera") return false;
+  const loaderRef = useRef(null);
+  const isFetching = useRef(false);
 
-    // Filtro por Modalidade
-    if (modalidadeFiltro !== "TODAS" && jogo.modalidade !== modalidadeFiltro) {
-      return false;
+  const fetchJogos = useCallback(async (pageNumber) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
+
+    setLoading(true);
+    setErro(null);
+
+    const from = pageNumber * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
+    try {
+      const { data, error } = await supabase
+        .from("confronto")
+        .select(`
+          id,
+          horario,
+          finalizado,
+          time1 (
+            id,
+            Nome,
+            id_modalidade,
+            modalidade:id_modalidade (
+              id,
+              nome,
+              genero
+            )
+          ),
+          time2 (
+            id,
+            Nome
+          )
+        `)
+        .eq("finalizado", false)
+        .order("horario", { ascending: true })
+        .range(from, to);
+
+      if (error) {
+        console.error("Erro ao buscar jogos:", error);
+        setErro("Erro ao carregar os jogos.");
+        setHasMore(false);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        setHasMore(false);
+        if (pageNumber === 0) {
+          setJogos([]);
+        }
+      } else {
+        setJogos((prev) => (pageNumber === 0 ? data : [...prev, ...data]));
+
+        if (data.length < PAGE_SIZE) {
+          setHasMore(false);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setErro("Erro ao carregar os jogos.");
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+      setJaCarregou(true);
+      isFetching.current = false;
+    }
+  }, []);
+
+  // Carrega a primeira página
+  useEffect(() => {
+    fetchJogos(0);
+  }, [fetchJogos]);
+
+  // Infinite Scroll
+  useEffect(() => {
+    if (!hasMore || loading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isFetching.current) {
+          setPage((prevPage) => {
+            const nextPage = prevPage + 1;
+            fetchJogos(nextPage);
+            return nextPage;
+          });
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
     }
 
-    // Modalidades isentas do filtro de gênero
-    const isIsentoGenero = jogo.modalidade === "FUTSETE" || jogo.modalidade === "FUTSAL";
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [hasMore, loading, fetchJogos]);
 
-    // Se não for isento, exige correspondência de gênero
-    if (!isIsentoGenero && jogo.genero !== generoFiltro) {
-      return false;
-    }
+  const getBandeira = (nomeTime) => {
+    if (!nomeTime) return "🏳️";
+    return BANDEIRAS[nomeTime] || "🏳️";
+  };
 
-    return true;
-  });
-
-  const ocultarBotaoGenero = modalidadeFiltro === "FUTSETE" || modalidadeFiltro === "FUTSAL";
-
-  // Helper para renderizar bandeiras em URL (imagem) ou Emoji com fallback seguro
-  const renderBandeira = (time) => {
-    const bandeira = time?.bandeira;
-    if (bandeira?.startsWith("http")) {
-      return (
-        <img
-          src={bandeira}
-          alt={time?.nome || "Time"}
-          className="bandeira-img"
-        />
-      );
-    }
-    return <span className="bandeira">{bandeira || "🏳️"}</span>;
+  const formatarHorario = (horario) => {
+    if (!horario) return "--:--";
+    const date = new Date(horario);
+    return date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -51,47 +142,49 @@ function Horarios() {
         <h1 className="horarios-titulo">Horários de Início</h1>
       </div>
 
-      {/* Barra de Filtros */}
-      <div className="filtros-container">
-        {!ocultarBotaoGenero && (
-          <div className="toggle-genero-container">
-            <button
-              className={`btn-genero ${generoFiltro === "M" ? "ativo" : ""}`}
-              onClick={() => setGeneroFiltro("M")}
-            >
-              M
-            </button>
-            <button
-              className={`btn-genero ${generoFiltro === "F" ? "ativo" : ""}`}
-              onClick={() => setGeneroFiltro("F")}
-            >
-              F
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Lista de Confrontos */}
       <div className="lista-confrontos">
-        {jogosFiltrados.length === 0 ? (
-          <p className="horarios-mensagem-vazia">Nenhum jogo encontrado.</p>
-        ) : (
-          jogosFiltrados.map((jogo) => (
-            <div key={jogo.id} className="card-confronto">
-              <span className="modalidade-titulo">{jogo.modalidade}</span>
-              <div className="conteudo-confronto">
-                <div className="time-box">
-                  {renderBandeira(jogo.timeA)}
-                  <span className="nome-time">{jogo.timeA?.nome || "Time A"}</span>
-                </div>
-                <div className="horario-pill">{jogo.horario}</div>
-                <div className="time-box">
-                  {renderBandeira(jogo.timeB)}
-                  <span className="nome-time">{jogo.timeB?.nome || "Time B"}</span>
-                </div>
+        {jaCarregou && jogos.length === 0 && !loading && (
+          <p className="horarios-mensagem-vazia">
+            Nenhuma competição encontrada.
+          </p>
+        )}
+
+        {jogos.map((jogo) => (
+          <div key={jogo.id} className="card-confronto">
+            <span className="modalidade-titulo">
+              {jogo.time1?.modalidade?.nome || "Modalidade"}
+            </span>
+
+            <div className="conteudo-confronto">
+              <div className="time-box">
+                <span className="bandeira">{getBandeira(jogo.time1?.Nome)}</span>
+                <span className="nome-time">
+                  {jogo.time1?.Nome || "Time 1"}
+                </span>
+              </div>
+
+              <div className="horario-pill">
+                {formatarHorario(jogo.horario)}
+              </div>
+
+              <div className="time-box">
+                <span className="bandeira">{getBandeira(jogo.time2?.Nome)}</span>
+                <span className="nome-time">
+                  {jogo.time2?.Nome || "Time 2"}
+                </span>
               </div>
             </div>
-          ))
+          </div>
+        ))}
+
+        <div ref={loaderRef} style={{ height: "30px", marginTop: "10px" }}>
+          {loading && (
+            <p style={{ textAlign: "center", color: "#666" }}>Carregando...</p>
+          )}
+        </div>
+
+        {erro && (
+          <p style={{ textAlign: "center", color: "red" }}>{erro}</p>
         )}
       </div>
     </div>
