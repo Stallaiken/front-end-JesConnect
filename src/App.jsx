@@ -14,7 +14,6 @@ import Ranking from "./Pages/Ranking.jsx";
 import AdicionarJogo from "./Pages/AdicionarJogo.jsx";
 import EditarTime from "./Pages/EditarTime.jsx";
 import Finalizar from "./Pages/Finalizar.jsx";
-import ModalidadeFiltro from "./Pages/modalidadeFiltros.jsx";
 import AdicionarTime from "./Pages/AdicionarTime.jsx";
 function App() {
 
@@ -27,7 +26,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Visitante />} />
         <Route path="/Horarios" element={<Horarios />} />
-        <Route path="/modalidade/:nomeModalidade" element={<ModalidadeFiltro />} />
         <Route path="/Historico" element={<Historico />} />
         <Route path="/Ranking" element={<Ranking />} />
 
