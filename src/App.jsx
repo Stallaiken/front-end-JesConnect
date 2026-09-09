@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Menu from "./Components/Menu.jsx";
-import MenuFilho from "./Components/MenuFilho.jsx";
+
 
 import Administrativo from "./Pages/Administrativo.jsx";
 import Erro404 from "./Pages/Erro404.jsx";
@@ -10,7 +10,7 @@ import Visitante from "./Pages/Visitante.jsx";
 import Horarios from "./Pages/Horarios.jsx";
 import Historico from "./Pages/Historico.jsx";
 import Ranking from "./Pages/Ranking.jsx";
-import AdminButton from "./Components/adminButton.jsx"; // Renomeado para PascalCase
+
 import AdicionarJogo from "./Pages/AdicionarJogo.jsx";
 import EditarTime from "./Pages/EditarTime.jsx";
 import Finalizar from "./Pages/Finalizar.jsx";
@@ -21,12 +21,11 @@ function App() {
 
   return (
     <>
-      <Menu aoAbrir={setMenuAberto} />
+      <Menu/>
 
-      {MenuAberto && <MenuFilho aoAbrir={setMenuAberto} />}
       
       {/* Componente em PascalCase */}
-      <AdminButton />
+   
 
       <Routes>
         <Route path="/" element={<Visitante />} />

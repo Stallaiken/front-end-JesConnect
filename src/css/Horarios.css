@@ -1,229 +1,281 @@
-.horarios-page {
-  background-color: #e8f1ff;
-  min-height: 100vh;
+/* ==========================================
+   LAYOUT GERAL & CONTAINER
+   ========================================== */
+.horarios-container {
   width: 100%;
-  padding: 80px 16px 40px 16px;
+  max-width: 560px; /* Largura aumentada para esticar os cards para os lados */
+  margin: 0 auto;
+  padding: 16px 12px 80px 12px;
+  box-sizing: border-box;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
 }
 
-.horarios-titulo-container {
-  background-color: #000000;
-  padding: 12px 32px;
-  border-radius: 6px;
+/* ==========================================
+   PAINEL DE FILTROS (EMPILHADO)
+   ========================================== */
+.filtros-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.horarios-titulo {
-  color: #ffffff;
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.lista-confrontos {
   width: 100%;
-  max-width: 380px;
+}
+
+/* TOGGLE MASC / FEM */
+.genero-toggle {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  box-sizing: border-box;
-}
-
-.card-confronto {
-  background-color: #000000;
-   box-shadow: 0px 7px 2px 0px rgba(0, 0, 0, 0.15);
-  color: #ffffff;
-  width: 100%;
-  border-radius: 10px;
-  padding: 16px 20px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  transition: box-shadow 0.2s ease;
-}
-
-.card-editavel {
-  cursor: pointer;
-}
-
-.card-editavel:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-}
-
-.modalidade-titulo {
-  font-size: 0.85rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #1b52e0;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
-}
-
-.conteudo-confronto {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.time-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 110px;
-}
-
-.bandeira-container {
   background-color: #ffffff;
-  border-radius: 10px;
-  width: 98px;
-  height: 85px;
+  border: 1px solid #cccccc;
+  padding: 2px;
+  border-radius: 50px;
+}
+
+.btn-genero {
+  background: transparent;
+  border: none;
+  color: #333333;
+  padding: 6px 20px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-genero.active {
+  background-color: #f26522;
+  color: #ffffff;
+}
+
+/* SELECT DE MODALIDADES */
+.select-modalidade-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select-modalidade {
+  background-color: #f26522;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 6px 22px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(242, 101, 34, 0.3);
+}
+
+.select-modalidade option {
+  background-color: #232429;
+  color: #ffffff;
+  padding: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ==========================================
+   CARDS DE PARTIDA
+   ========================================== */
+.lista-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.card-partida {
+  background-color: #232429;
+  border-radius: 14px;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* BADGES DE STATUS */
+.badge-status-live,
+.badge-status-upcoming {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-status-live .dot {
+  animation: piscar 1.2s infinite;
+}
+
+@keyframes piscar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* CONTEÚDO DO CONFRONTO */
+.conteudo-partida {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 6px 0;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.col-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+/* RETÂNGULO DA BANDEIRA (TAMANHO AUMENTADO) */
+.box-logo {
+  width: 90px; /* Aumentado */
+  height: 60px; /* Aumentado */
+  background-color: #ffffff;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .bandeira-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Preenche a caixa mantendo a proporção */
 }
 
-.bandeira-fallback {
-  font-size: 1.2rem;
-}
-
-.nome-time {
-  font-size: 1.0rem;
-  font-weight: 800;
+.nome-turma {
+  font-size: 0.75rem;
+  font-weight: 700;
   color: #ffffff;
-  margin-top: 6px;
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100px;
+  text-transform: lowercase;
+  line-height: 1.1;
 }
 
-.horario-pill {
-  background-color: #1b52e0;
-  color: #ffffff;
-  padding: 8px 16px;
-  border-radius: 9px;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.horarios-mensagem-vazia {
-  text-align: center;
-  color: #555555;
-  font-size: 0.95rem;
-  margin-top: 20px;
-  font-weight: 600;
-}
-
-@media (min-width: 768px) {
-  .lista-confrontos {
-    max-width: 800px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .card-confronto {
-    width: calc(50% - 12px);
-  }
-}
-
-@media (min-width: 1200px) {
-  .lista-confrontos {
-    max-width: 1100px;
-  }
-
-}
-
-
-.genero-toggle {
-  position: relative;
-
-  width: 230px;
-  height: 46px;
-
-  padding: 4px;
-
-  background: #000;
-
-  border-radius: 30px;
-
-  display: flex;
-  align-items: center;
-
-  cursor: pointer;
-
-  box-sizing: border-box;
-}
-
-.genero-toggle-bolinha {
-  position: absolute;
-
-  top: 4px;
-  left: 4px;
-
-  width: calc(50% - 4px);
-  height: 38px;
-
-  background: white;
-
-  border-radius: 24px;
-
-  transition: transform 0.25s ease;
-
-  z-index: 1;
-}
-
-.genero-toggle.feminino .genero-toggle-bolinha {
-  transform: translateX(108px);
-}
-
-.genero-opcao {
-  width: 50%;
-
+/* PLACAR LIMPO */
+.placar-box {
+  background: transparent !important;
+  color: #ffffff !important;
+  font-size: 2.4rem !important; /* Ligeiramente maior para acompanhar as bandeiras */
+  font-weight: 800 !important;
+  letter-spacing: 2px;
+  padding: 0 12px;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   display: flex;
   justify-content: center;
   align-items: center;
+}
 
-  color: white;
-
-  font-size: 0.78rem;
+/* BADGE DA QUADRA (BOTÃO LARANJA) */
+.badge-quadra {
+  background-color: #f26522;
+  color: #ffffff;
+  font-size: 0.72rem;
   font-weight: 800;
-
-  z-index: 2;
-
-  transition: color 0.25s ease;
-}
-
-.genero-toggle.masculino .genero-opcao:first-of-type,
-.genero-toggle.feminino .genero-opcao:last-of-type {
-  color: #000;
-}
-
-.horarios-subtitulo {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #a0aec0;
-  margin-top: 4px;
-  margin-bottom: 0;
+  padding: 5px 22px;
+  border-radius: 50px;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   DIVISOR "EM BREVE"
+   ========================================== */
+.divisor-em-breve {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 28px 0 20px 0;
+  width: 100%;
+}
+
+.linha-laranja {
+  position: absolute;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 3px;
+  background-color: #f26522;
+  z-index: 1;
+}
+
+.badge-divisor {
+  position: relative;
+  z-index: 2;
+  background-color: #f26522;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 5px 22px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   MENSAGENS DE CARREGAMENTO & ERRO
+   ========================================== */
+.loading-text {
+  text-align: center;
+  color: #a0a5b1;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 16px 0;
+}
+
+/* ==========================================
+   BOTÃO VOLTAR AO TOPO
+   ========================================== */
+.btn-scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #f26522;
+  color: #ffffff;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+}
+
+.btn-scroll-top:hover {
+  background-color: #e05411;
 }

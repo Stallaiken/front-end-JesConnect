@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import "../css/Horarios.css";
+import "../css/Ranking.css";
 
 // Importação dinâmica de imagens de bandeiras
 const bandeirasModules = import.meta.glob(

@@ -1,353 +1,240 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "../css/Horarios.css";
 
+// Mapeamento dinâmico das bandeiras
 const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  {
-    eager: true,
-  },
+  { eager: true }
 );
+
 const BANDEIRAS = {};
 for (const path in bandeirasModules) {
   const fileName = path.split("/").pop().split(".")[0];
-
   BANDEIRAS[fileName] = bandeirasModules[path].default;
 }
 
-const PAGE_SIZE = 10;
-
 function Horarios() {
-  const navigate = useNavigate();
-
-  const [jogos, setJogos] = useState([]);
-
-  const [loading, setLoading] = useState(false);
-
-  const [hasMore, setHasMore] = useState(true);
-
-  const [erro, setErro] = useState(null);
-
-  const [jaCarregou, setJaCarregou] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(
-    localStorage.getItem("isAdmin") === "true",
-  );
-
-
-
-  const loaderRef = useRef(null);
-  const isFetching = useRef(false);
-  const pageRef = useRef(0);
+  const [generoFiltro, setGeneroFiltro] = useState("M"); // "M" ou "F"
+  const [modalidadeId, setModalidadeId] = useState("");
+  const [modalidades, setModalidades] = useState([]);
+  const [confrontos, setConfrontos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [erroSupabase, setErroSupabase] = useState("");
+  const [mostrarSeta, setMostrarSeta] = useState(false);
 
   useEffect(() => {
-    const verificarAdmin = () => {
-      setIsAdmin(localStorage.getItem("isAdmin") === "true");
-    };
-
-    verificarAdmin();
-
-    window.addEventListener("admin-status-change", verificarAdmin);
-
-    return () => {
-      window.removeEventListener("admin-status-change", verificarAdmin);
-    };
+    const handleScroll = () => setMostrarSeta(window.scrollY > 250);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const fetchJogos = useCallback(async (pageNumber, reset = false) => {
-    if (isFetching.current) return;
-
-    isFetching.current = true;
-
-    setLoading(true);
-    setErro(null);
-
-    const from = pageNumber * PAGE_SIZE;
-
-    const to = from + PAGE_SIZE - 1;
-
-    try {
+  // Carrega lista de modalidades
+  useEffect(() => {
+    async function carregarModalidades() {
       const { data, error } = await supabase
-        .from("confronto")
-        .select(
-          `
-              id,
-              horario,
-              finalizado,
+        .from("modalidade")
+        .select("id, nome, genero")
+        .order("nome");
 
-              time1:time1 (
-                id,
-                Nome,
-                logo_URL,
-                id_modalidade,
-
-                modalidade:id_modalidade (
-                  id,
-                  nome,
-                  genero
-                )
-              ),
-
-              time2:time2 (
-                id,
-                Nome,
-                logo_URL,
-                id_modalidade
-              )
-            `,
-        )
-        .eq("finalizado", false)
-        .order("horario", {
-          ascending: true,
-        })
-        .range(from, to);
-
-      if (error) {
-        throw error;
-      }
-
-      if (!data || data.length === 0) {
-        setHasMore(false);
-
-        if (pageNumber === 0 || reset) {
-          setJogos([]);
-        }
-      } else {
-        if (reset || pageNumber === 0) {
-          setJogos(data);
-        } else {
-          setJogos((prev) => [...prev, ...data]);
-        }
-
-        setHasMore(data.length >= PAGE_SIZE);
-      }
-    } catch (err) {
-      console.error("Erro ao buscar jogos:", err);
-
-      setErro("Erro ao carregar os jogos.");
-
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-      setJaCarregou(true);
-      isFetching.current = false;
+      if (!error && data) setModalidades(data);
     }
+    carregarModalidades();
   }, []);
 
+  // Carrega os confrontos do Supabase sem colunas inexistentes
   useEffect(() => {
-    fetchJogos(0, true);
-  }, [fetchJogos]);
+    async function buscarConfrontos() {
+      setLoading(true);
+      setErroSupabase("");
 
+      try {
+        const { data, error } = await supabase
+          .from("confronto")
+          .select(`
+            id,
+            horario,
+            finalizado,
+            time1:time1 (
+              id,
+              Nome,
+              logo_URL,
+              modalidade:id_modalidade (
+                id,
+                nome,
+                genero
+              )
+            ),
+            time2:time2 (
+              id,
+              Nome,
+              logo_URL
+            )
+          `);
 
-  useEffect(() => {
-    const channel = supabase
-      .channel("confrontos-realtime")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "confronto",
-        },
-        () => {
-          pageRef.current = 0;
-          setHasMore(true);
-
-          fetchJogos(0, true);
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchJogos]);
-
-
-  useEffect(() => {
-    if (!hasMore || loading) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isFetching.current) {
-          pageRef.current += 1;
-
-          fetchJogos(pageRef.current);
+        if (error) {
+          console.error("Erro no Supabase:", error);
+          setErroSupabase(error.message);
+        } else {
+          setConfrontos(data || []);
         }
-      },
-      {
-        threshold: 0.1,
-      },
-    );
-
-    const currentLoader = loaderRef.current;
-
-    if (currentLoader) {
-      observer.observe(currentLoader);
-    }
-
-    return () => {
-      if (currentLoader) {
-        observer.unobserve(currentLoader);
+      } catch (err) {
+        console.error("Erro de requisição:", err);
+        setErroSupabase("Erro ao conectar ao banco de dados.");
+      } finally {
+        setLoading(false);
       }
-    };
-  }, [hasMore, loading, fetchJogos]);
-
-  // ======================================================
-  // BANDEIRA
-  // ======================================================
-
-  const getBandeira = (logoURL) => {
-    if (!logoURL) {
-      return null;
     }
 
-    return BANDEIRAS[logoURL] || null;
+    buscarConfrontos();
+  }, []);
+
+  const renderBandeira = (logoURL, nomeAlt) => {
+    if (!logoURL) return null;
+    const imgUrl = BANDEIRAS[logoURL] || logoURL;
+    return <img src={imgUrl} alt={nomeAlt || "Bandeira"} className="bandeira-img" />;
   };
 
-  // ======================================================
-  // HORÁRIO
-  // ======================================================
+  const subirParaTopo = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  const formatarHorario = (horario) => {
-    if (!horario) {
-      return "--:--";
+  // Filtragem dos confrontos por gênero e modalidade
+  const confrontosFiltrados = confrontos.filter((jogo) => {
+    if (jogo.finalizado === true) return false;
+
+    const modObj = jogo.time1?.modalidade;
+    const modGenero = (modObj?.genero || "").toUpperCase();
+
+    let confereGenero = true;
+    if (modGenero && modGenero !== "NOT" && modGenero !== "N") {
+      confereGenero = modGenero.startsWith(generoFiltro);
     }
 
-    const date = new Date(horario);
+    const confereModalidade = modalidadeId
+      ? Number(modObj?.id) === Number(modalidadeId)
+      : true;
 
-    return date.toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  // ======================================================
-  // RENDER
-  // ======================================================
+    return confereGenero && confereModalidade;
+  });
 
   return (
-    <div className="horarios-page">
-      <div className="horarios-titulo-container">
-        <h1 className="horarios-titulo">Horários de Início</h1>
+    <div className="horarios-container">
+      {/* FILTROS */}
+      <div className="filtros-wrapper">
+        <div className="genero-toggle">
+          <button
+            type="button"
+            className={`btn-genero ${generoFiltro === "M" ? "active" : ""}`}
+            onClick={() => setGeneroFiltro("M")}
+          >
+            MASC
+          </button>
+          <button
+            type="button"
+            className={`btn-genero ${generoFiltro === "F" ? "active" : ""}`}
+            onClick={() => setGeneroFiltro("F")}
+          >
+            FEM
+          </button>
+        </div>
+
+        <div className="select-modalidade-wrapper">
+          <select
+            value={modalidadeId}
+            onChange={(e) => setModalidadeId(e.target.value)}
+            className="select-modalidade"
+          >
+            <option value="">MODALIDADE ↓</option>
+            {modalidades.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome.toUpperCase()} {m.genero && m.genero !== "Not" ? `(${m.genero})` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div className="lista-confrontos">
-        {jaCarregou && jogos.length === 0 && !loading && (
-          <p className="horarios-mensagem-vazia">
-            Nenhuma competição encontrada.
+      {/* DUMMY CARD AO VIVO */}
+      <div className="lista-cards">
+        <div className="card-partida live">
+          <span className="badge-status-live">
+            AO VIVO <span className="dot">•</span>
+          </span>
+          <div className="conteudo-partida">
+            <div className="col-time">
+              <div className="box-logo" />
+              <span className="nome-turma">nome da turma</span>
+            </div>
+            <div className="placar-box">0 : 0</div>
+            <div className="col-time">
+              <div className="box-logo" />
+              <span className="nome-turma">nome da turma</span>
+            </div>
+          </div>
+          <div className="badge-quadra">QUADRA 4</div>
+        </div>
+      </div>
+
+      {/* LINHA DIVISÓRIA EM BREVE */}
+      <div className="divisor-em-breve">
+        <div className="linha-laranja" />
+        <span className="badge-divisor">EM BREVE</span>
+      </div>
+
+      {/* CARDS VINDOS DO BANCO */}
+      <div className="lista-cards">
+        {loading ? (
+          <p className="loading-text">Carregando horários...</p>
+        ) : erroSupabase ? (
+          <p className="loading-text" style={{ color: "red" }}>
+            {erroSupabase}
           </p>
-        )}
+        ) : confrontosFiltrados.length > 0 ? (
+          confrontosFiltrados.map((jogo) => (
+            <div key={jogo.id} className="card-partida">
+              <span className="badge-status-upcoming">EM BREVE •</span>
 
-        {jogos.map((jogo) => {
-          const bandeira1 = getBandeira(jogo.time1?.logo_URL);
-
-          const bandeira2 = getBandeira(jogo.time2?.logo_URL);
-
-          return (
-            <div
-              key={jogo.id}
-              className={`card-confronto ${isAdmin ? "card-editavel" : ""}`}
-              onClick={() => {
-                if (isAdmin) {
-                  navigate("/finalizar", {
-                    state: {
-                      jogo,
-                    },
-                  });
-                }
-              }}
-              style={{
-                cursor: isAdmin ? "pointer" : "default",
-              }}
-            >
-              <span className="modalidade-titulo">
-                {jogo.time1?.modalidade?.nome || "Modalidade"}
-              </span>
-
-              <div className="conteudo-confronto">
-                {/* TIME 1 */}
-
-                <div className="time-box">
-                  <div className="bandeira-container">
-                    {bandeira1 && (
-                      <img
-                        src={bandeira1}
-                        alt={jogo.time1?.Nome || "Time 1"}
-                        className="bandeira-img"
-                      />
-                    )}
+              <div className="conteudo-partida">
+                <div className="col-time">
+                  <div className="box-logo">
+                    {renderBandeira(jogo.time1?.logo_URL, jogo.time1?.Nome)}
                   </div>
-
-                  <span className="nome-time">
+                  <span className="nome-turma">
                     {jogo.time1?.Nome || "Time 1"}
                   </span>
                 </div>
 
-                {/* HORÁRIO */}
+                <div className="placar-box">0 : 0</div>
 
-                <div className="horario-pill">
-                  {formatarHorario(jogo.horario)}
-                </div>
-
-                {/* TIME 2 */}
-
-                <div className="time-box">
-                  <div className="bandeira-container">
-                    {bandeira2 && (
-                      <img
-                        src={bandeira2}
-                        alt={jogo.time2?.Nome || "Time 2"}
-                        className="bandeira-img"
-                      />
-                    )}
+                <div className="col-time">
+                  <div className="box-logo">
+                    {renderBandeira(jogo.time2?.logo_URL, jogo.time2?.Nome)}
                   </div>
-
-                  <span className="nome-time">
+                  <span className="nome-turma">
                     {jogo.time2?.Nome || "Time 2"}
                   </span>
                 </div>
               </div>
+
+              <div className="badge-quadra">QUADRA 2</div>
             </div>
-          );
-        })}
-
-        <div
-          ref={loaderRef}
-          style={{
-            height: "30px",
-            marginTop: "10px",
-          }}
-        >
-          {loading && (
-            <p
-              style={{
-                textAlign: "center",
-                color: "#666",
-              }}
-            >
-              Carregando...
-            </p>
-          )}
-        </div>
-
-        {erro && (
-          <p
-            style={{
-              textAlign: "center",
-              color: "red",
-            }}
-          >
-            {erro}
-          </p>
+          ))
+        ) : (
+          <p className="loading-text">Nenhum confronto encontrado.</p>
         )}
       </div>
 
-
-     
+      {mostrarSeta && (
+        <button
+          type="button"
+          className="btn-scroll-top"
+          onClick={subirParaTopo}
+          aria-label="Voltar ao topo"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 }
