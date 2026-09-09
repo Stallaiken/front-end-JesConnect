@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import "../css/Horarios.css";
+import "../css/Ranking.css";
 
 // Importação dinâmica de imagens de bandeiras
 const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  { eager: true }
+  { eager: true },
 );
 
 const BANDEIRAS = {};
@@ -77,7 +77,7 @@ function Ranking() {
               time2,
               finalizado,
               detalhes ( pontuacao )
-            `
+            `,
           )
           .eq("finalizado", true);
 
@@ -137,9 +137,7 @@ function Ranking() {
 
         tabela.sort(
           (a, b) =>
-            b.pontos - a.pontos ||
-            b.saldo - a.saldo ||
-            b.golsPro - a.golsPro
+            b.pontos - a.pontos || b.saldo - a.saldo || b.golsPro - a.golsPro,
         );
 
         setRanking(tabela);
@@ -228,13 +226,25 @@ function Ranking() {
                   2º LUGAR
                 </span>
 
-                <div style={{ height: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div
+                  style={{
+                    height: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   {getBandeira(segundo.logo) && (
                     <img
                       src={getBandeira(segundo.logo)}
                       alt={segundo.nome}
                       className="bandeira-img"
-                      style={{ width: "45px", height: "30px", objectFit: "cover", borderRadius: "4px" }}
+                      style={{
+                        width: "45px",
+                        height: "30px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
                     />
                   )}
                 </div>
@@ -264,13 +274,25 @@ function Ranking() {
                   1º LUGAR
                 </span>
 
-                <div style={{ height: "36px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div
+                  style={{
+                    height: "36px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   {getBandeira(primeiro.logo) && (
                     <img
                       src={getBandeira(primeiro.logo)}
                       alt={primeiro.nome}
                       className="bandeira-img"
-                      style={{ width: "50px", height: "34px", objectFit: "cover", borderRadius: "4px" }}
+                      style={{
+                        width: "50px",
+                        height: "34px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
                     />
                   )}
                 </div>
@@ -301,13 +323,25 @@ function Ranking() {
                   3º LUGAR
                 </span>
 
-                <div style={{ height: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div
+                  style={{
+                    height: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   {getBandeira(terceiro.logo) && (
                     <img
                       src={getBandeira(terceiro.logo)}
                       alt={terceiro.nome}
                       className="bandeira-img"
-                      style={{ width: "45px", height: "30px", objectFit: "cover", borderRadius: "4px" }}
+                      style={{
+                        width: "45px",
+                        height: "30px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
                     />
                   )}
                 </div>
@@ -351,7 +385,15 @@ function Ranking() {
                       {idx + 4}º
                     </span>
 
-                    <div style={{ width: "40px", height: "26px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div
+                      style={{
+                        width: "40px",
+                        height: "26px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       {getBandeira(time.logo) && (
                         <img
                           src={getBandeira(time.logo)}

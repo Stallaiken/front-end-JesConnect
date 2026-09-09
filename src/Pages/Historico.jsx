@@ -1,25 +1,21 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import "../css/Horarios.css";
+import "../css/Historico.css";
 
 const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  {
-    eager: true,
-  },
+  { eager: true }
 );
 
 const BANDEIRAS = {};
 
 for (const path in bandeirasModules) {
   const fileName = path.split("/").pop().split(".")[0];
-
   BANDEIRAS[fileName] = bandeirasModules[path].default;
 }
 
 function Historico() {
   const [historico, setHistorico] = useState([]);
-
   const [detalheModal, setDetalheModal] = useState(null);
 
   useEffect(() => {
@@ -45,12 +41,10 @@ function Historico() {
             detalhes:detalhes (
               pontuacao
             )
-          `,
+          `
         )
         .eq("finalizado", true)
-        .order("horario", {
-          ascending: false,
-        });
+        .order("horario", { ascending: false });
 
       if (error) {
         console.error("Erro histórico:", error);
@@ -67,83 +61,74 @@ function Historico() {
     if (!jogo.detalhes || jogo.detalhes.length === 0) {
       return [0, 0, 0, 0, 0, 0];
     }
-
     return jogo.detalhes[0]?.pontuacao || [0, 0, 0, 0, 0, 0];
   };
 
   const getBandeira = (logoURL) => {
     if (!logoURL) return null;
-
     return BANDEIRAS[logoURL] || null;
   };
 
   return (
-    <div className="horarios-page">
-      <div className="horarios-titulo-container">
-        <h1 className="horarios-titulo">Histórico de Partidas</h1>
-
-        <p className="horarios-subtitulo">Partidas Finalizadas</p>
+    <div className="historico-page">
+      <div className="historico-header">
+        <h1 className="historico-titulo">Histórico de Partidas</h1>
+        <p className="historico-subtitulo">Partidas Finalizadas</p>
       </div>
 
-      <div className="lista-confrontos">
+      <div className="historico-lista">
         {historico.length === 0 ? (
-          <p className="horarios-mensagem-vazia">
+          <p className="historico-mensagem-vazia">
             Nenhuma partida finalizada ainda.
           </p>
         ) : (
           historico.map((jogo) => {
             const pontuacao = pegarPontuacao(jogo);
-
             const gols1 = pontuacao[0] || 0;
-
             const gols2 = pontuacao[1] || 0;
 
             const bandeira1 = getBandeira(jogo.time1?.logo_URL);
-
             const bandeira2 = getBandeira(jogo.time2?.logo_URL);
 
             return (
               <div
                 key={jogo.id}
-                className="card-confronto card-editavel"
+                className="historico-card historico-card-clicavel"
                 onClick={() => setDetalheModal(jogo)}
               >
-                <div className="conteudo-confronto">
-                  <div className="time-box">
-                    <div className="bandeira-container">
+                <div className="historico-card-conteudo">
+                  <div className="historico-time">
+                    <div className="historico-bandeira-container">
                       {bandeira1 && (
                         <img
                           src={bandeira1}
                           alt={jogo.time1?.Nome}
-                          className="bandeira-img"
+                          className="historico-bandeira-img"
                         />
                       )}
                     </div>
-
-                    <span className="nome-time">{jogo.time1?.Nome}</span>
+                    <span className="historico-nome-time">
+                      {jogo.time1?.Nome}
+                    </span>
                   </div>
 
-                  <div
-                    className="horario-pill"
-                    style={{
-                      backgroundColor: "#222",
-                    }}
-                  >
+                  <div className="historico-placar">
                     {gols1} X {gols2}
                   </div>
 
-                  <div className="time-box">
-                    <div className="bandeira-container">
+                  <div className="historico-time">
+                    <div className="historico-bandeira-container">
                       {bandeira2 && (
                         <img
                           src={bandeira2}
                           alt={jogo.time2?.Nome}
-                          className="bandeira-img"
+                          className="historico-bandeira-img"
                         />
                       )}
                     </div>
-
-                    <span className="nome-time">{jogo.time2?.Nome}</span>
+                    <span className="historico-nome-time">
+                      {jogo.time2?.Nome}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -152,63 +137,28 @@ function Historico() {
         )}
       </div>
 
-      {/* ==================================================
-          MODAL
-      ================================================== */}
-
       {detalheModal &&
         (() => {
           const pontuacao = pegarPontuacao(detalheModal);
 
           return (
-            <div
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                backgroundColor: "rgba(0,0,0,0.6)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1100,
-                padding: "16px",
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: "#000",
-                  color: "#fff",
-                  padding: "24px",
-                  borderRadius: "20px",
-                  width: "100%",
-                  maxWidth: "400px",
-                  boxSizing: "border-box",
-                }}
-              >
-                <h3
-                  style={{
-                    color: "#1b52e0",
-                    marginTop: 0,
-                  }}
-                >
-                  Detalhes da Partida
-                </h3>
+            <div className="historico-modal-overlay">
+              <div className="historico-modal-container">
+                <h3 className="historico-modal-titulo">Detalhes da Partida</h3>
 
-                <p>
+                <p className="historico-modal-item">
                   <b>Placar:</b> {detalheModal.time1?.Nome} {pontuacao[0] || 0}
                   {" x "}
                   {pontuacao[1] || 0} {detalheModal.time2?.Nome}
                 </p>
 
-                <p>
+                <p className="historico-modal-item">
                   <b>Cartões Amarelos:</b> {pontuacao[2] || 0}
                   {" - "}
                   {pontuacao[3] || 0}
                 </p>
 
-                <p>
+                <p className="historico-modal-item">
                   <b>Cartões Vermelhos:</b> {pontuacao[4] || 0}
                   {" - "}
                   {pontuacao[5] || 0}
@@ -216,13 +166,7 @@ function Historico() {
 
                 <button
                   onClick={() => setDetalheModal(null)}
-                  className="horario-pill"
-                  style={{
-                    width: "100%",
-                    border: "none",
-                    cursor: "pointer",
-                    marginTop: "16px",
-                  }}
+                  className="historico-modal-btn"
                 >
                   Fechar
                 </button>

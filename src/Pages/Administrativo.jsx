@@ -9,6 +9,7 @@ function Administrativo() {
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState("password");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -70,13 +71,23 @@ function Administrativo() {
 
           <div className="input-group">
             <input
-              type="password"
+              type={showPassword}
               className="admin-input"
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
+              
             />
+            <button
+              type="button"
+              className="toggle-password-btn"
+              onClick={() =>
+                setShowPassword(showPassword === "password" ? "text" : "password")
+              }
+            >
+              {showPassword === "password" ? "Mostrar" : "Ocultar"}
+            </button>
           </div>
 
           <button type="submit" className="admin-button" disabled={loading}>

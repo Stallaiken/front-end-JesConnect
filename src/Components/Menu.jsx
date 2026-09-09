@@ -1,19 +1,16 @@
 import "../css/Menu.css";
 import Sesi_Logo from "../assets/Sesi_Logo.png";
+import {Link} from "react-router-dom";
 
-function Menu({ aoAbrir }) {
+function Menu() {
   return (
     <div className="menu">
-      <div className="icone-mais-opcoes">
-        <button 
-          className="btn-mais-opcoes" 
-          onClick={() => {
-            aoAbrir(prev => !prev);
-          }}
-        >
-          <div className="tres-tracinhos"></div>
-        </button>
-      </div>
+    <nav>
+      <Link to="/Horarios">Ao ViVO</Link>
+      <Link to="/Ranking">Ranking</Link>
+      <Link to="/Historico">Histórico</Link>
+      <Link to="/Administrativo">Admin</Link>
+    </nav>
 
       <div className="logo-sesi-menu">
         <img src={Sesi_Logo} alt="Logo SESI" />

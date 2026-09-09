@@ -1,74 +1,81 @@
+/* ==========================================
+   MENU PRINCIPAL RESPONSIVO
+   ========================================== */
 .menu {
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;    
-  background-color: #000000;      
   width: 100%;
-  height: 60px;
+  height: 52px;
+  background-color: #22242a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: clamp(8px, 2.5vw, 20px);
   box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1100;
-  padding-left: 15px;
-}
-
-.icone-mais-opcoes {
-  display: flex;
-  align-items: center;
-}
-
-.btn-mais-opcoes {
-  background: none;    
-  border: none;
-  cursor: pointer;
-  padding: 12px;        
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.tres-tracinhos {
   position: relative;
-  width: 28px;          
-  height: 4px;          
-  background-color: #ffffff; 
-  border-radius: 4px;   
+  overflow: hidden;
 }
 
-.tres-tracinhos::before,
-.tres-tracinhos::after {
-  content: '';
-  position: absolute;
-  width: 28px;
-  height: 4px;
-  background-color: #ffffff;
-  border-radius: 4px;
-  left: 0;
+/* NAVEGAÇÃO E LINKS */
+.menu nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 2vw, 24px);
+  flex: 1;
+  margin-right: 12px;
+  overflow-x: auto; /* Permite rolagem horizontal suave em telas muito pequenas */
+  scrollbar-width: none; /* Oculta scrollbar no Firefox */
+  -ms-overflow-style: none; /* Oculta scrollbar no IE/Edge */
 }
 
-.tres-tracinhos::before {
-  top: -9px; 
+/* Oculta scrollbar no Chrome/Safari */
+.menu nav::-webkit-scrollbar {
+  display: none;
 }
 
-.tres-tracinhos::after {
-  top: 9px;  
+.menu nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: clamp(0.68rem, 2.2vw, 0.85rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 3px;
+  border-bottom: 2.5px solid transparent;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap; /* Evita quebra de linha do texto */
 }
 
+.menu nav a.active,
+.menu nav a:hover {
+  border-bottom-color: #f26522;
+  opacity: 0.9;
+}
+
+/* EMPURRA O ÚLTIMO ITEM ("ADMIN") PARA A DIREITA */
+.menu nav a:last-child {
+  margin-left: auto;
+}
+
+/* BADGE LARANJA DO LOGO SESI (CORTE DIAGONAL ADAPTÁVEL) */
 .logo-sesi-menu {
-  background-color: #0052ff;
+  background-color: #f26522;
   height: 100%;
+  padding: 0 clamp(12px, 3vw, 24px) 0 clamp(18px, 4vw, 36px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 20px 0 40px;
-  clip-path: polygon(25px 0, 100% 0, 100% 100%, 0 100%);
+  flex-shrink: 0; /* Impede a imagem de esmagar */
+  clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%);
 }
 
 .logo-sesi-menu img {
-  height: 32px;
+  height: clamp(22px, 5vw, 30px);
   width: auto;
   object-fit: contain;
-  user-select: none;
-  -webkit-user-drag: none;
+}
+
+/* AJUSTES PARA TELAS MUITO PEQUENAS (< 380px) */
+@media (max-width: 380px) {
+  .menu nav a:last-child {
+    margin-left: 0; /* Mantém a sequência sem quebrar a rolagem horizontal */
+  }
 }
