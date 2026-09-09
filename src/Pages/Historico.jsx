@@ -29,17 +29,22 @@ function Historico() {
             finalizado,
 
             time1:time1 (
+              id,
               Nome,
               logo_URL
             ),
 
             time2:time2 (
+              id,
               Nome,
               logo_URL
             ),
 
             detalhes:detalhes (
-              pontuacao
+              ptn_time1,
+              ptn_time2,
+              local,
+              vencedor
             )
           `
         )
@@ -56,13 +61,6 @@ function Historico() {
 
     carregarHistorico();
   }, []);
-
-  const pegarPontuacao = (jogo) => {
-    if (!jogo.detalhes || jogo.detalhes.length === 0) {
-      return [0, 0, 0, 0, 0, 0];
-    }
-    return jogo.detalhes[0]?.pontuacao || [0, 0, 0, 0, 0, 0];
-  };
 
   const getBandeira = (logoURL) => {
     if (!logoURL) return null;
@@ -83,9 +81,9 @@ function Historico() {
           </p>
         ) : (
           historico.map((jogo) => {
-            const pontuacao = pegarPontuacao(jogo);
-            const gols1 = pontuacao[0] || 0;
-            const gols2 = pontuacao[1] || 0;
+            const detalhe = jogo.detalhes?.[0] || {};
+            const ptn1 = detalhe.ptn_time1 ?? 0;
+            const ptn2 = detalhe.ptn_time2 ?? 0;
 
             const bandeira1 = getBandeira(jogo.time1?.logo_URL);
             const bandeira2 = getBandeira(jogo.time2?.logo_URL);
@@ -113,7 +111,7 @@ function Historico() {
                   </div>
 
                   <div className="historico-placar">
-                    {gols1} X {gols2}
+                    {ptn1} X {ptn2}
                   </div>
 
                   <div className="historico-time">
@@ -139,7 +137,9 @@ function Historico() {
 
       {detalheModal &&
         (() => {
-          const pontuacao = pegarPontuacao(detalheModal);
+          const detalhe = detalheModal.detalhes?.[0] || {};
+          const ptn1 = detalhe.ptn_time1 ?? 0;
+          const ptn2 = detalhe.ptn_time2 ?? 0;
 
           return (
             <div className="historico-modal-overlay">
@@ -147,22 +147,16 @@ function Historico() {
                 <h3 className="historico-modal-titulo">Detalhes da Partida</h3>
 
                 <p className="historico-modal-item">
-                  <b>Placar:</b> {detalheModal.time1?.Nome} {pontuacao[0] || 0}
+                  <b>Placar:</b> {detalheModal.time1?.Nome} {ptn1}
                   {" x "}
-                  {pontuacao[1] || 0} {detalheModal.time2?.Nome}
+                  {ptn2} {detalheModal.time2?.Nome}
                 </p>
 
-                <p className="historico-modal-item">
-                  <b>Cartões Amarelos:</b> {pontuacao[2] || 0}
-                  {" - "}
-                  {pontuacao[3] || 0}
-                </p>
-
-                <p className="historico-modal-item">
-                  <b>Cartões Vermelhos:</b> {pontuacao[4] || 0}
-                  {" - "}
-                  {pontuacao[5] || 0}
-                </p>
+                {detalhe.local && (
+                  <p className="historico-modal-item">
+                    <b>Local:</b> {detalhe.local}
+                  </p>
+                )}
 
                 <button
                   onClick={() => setDetalheModal(null)}
