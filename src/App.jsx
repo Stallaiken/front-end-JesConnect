@@ -22,6 +22,12 @@ function App() {
     <>
       <Menu/>
 
+<<<<<<< HEAD
+=======
+      
+      {/* Componente em PascalCase */}
+   
+>>>>>>> 12e0e74f237dfc52b76e41a7319f5c648fba3f6e
 
   
       <Routes>

@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "../css/Horarios.css";
 
 // Mapeamento dinâmico das bandeiras
+// Mapeamento dinâmico das bandeiras
 const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
+  { eager: true }
   { eager: true }
 );
 
@@ -113,6 +116,8 @@ function Horarios() {
         setLoading(false);
       }
     }
+
+    buscarConfrontos();
 
     buscarConfrontos();
   }, []);
