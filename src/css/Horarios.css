@@ -222,7 +222,7 @@
 
 .linha-laranja {
   position: absolute;
-  width: 100vw;
+  width: 95vw;
   left: 50%;
   transform: translateX(-50%);
   height: 3px;
