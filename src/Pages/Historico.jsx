@@ -146,11 +146,13 @@ function Historico() {
               <div className="historico-modal-container">
                 <h3 className="historico-modal-titulo">Detalhes da Partida</h3>
 
-                <p className="historico-modal-item">
-                  <b>Placar:</b> {detalheModal.time1?.Nome} {ptn1}
-                  {" x "}
-                  {ptn2} {detalheModal.time2?.Nome}
-                </p>
+                <div className="historico-modal-item" style={{ marginBottom: "12px" }}>
+                  <b>Pontuação:</b>
+                  <div style={{ marginTop: "6px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <span>• <b>{detalheModal.time1?.Nome || "Time 1"}:</b> {ptn1} ponto(s)</span>
+                    <span>• <b>{detalheModal.time2?.Nome || "Time 2"}:</b> {ptn2} ponto(s)</span>
+                  </div>
+                </div>
 
                 {detalhe.local && (
                   <p className="historico-modal-item">
