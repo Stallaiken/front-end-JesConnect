@@ -37,6 +37,11 @@ Modalidades
 | `finalizado` | `bool` |  |
 | `horario` | `timestamptz` |  Nullable |
 | `ao_vivo` | `bool` |  |
+| `id_campeonato` | `uuid` |  Nullable |
+| `fase` | `varchar` |  Nullable |
+| `ordem` | `int4` |  Nullable |
+| `proximo_confronto` | `uuid` |  Nullable |
+| `lado_proximo` | `varchar` |  Nullable |
 
 ## Table `detalhes`
 
@@ -61,6 +66,32 @@ Modalidades
 | `id` | `uuid` | Primary |
 | `usuario` | `text` |  Unique |
 | `senha` | `text` |  |
+| `created_at` | `timestamptz` |  Nullable |
+
+## Table `campeonato`
+
+### Columns
+
+| Name | Type | Constraints |
+|------|------|-------------|
+| `id` | `uuid` | Primary |
+| `nome` | `varchar` |  |
+| `id_modalidade` | `uuid` |  |
+| `status` | `varchar` |  Nullable |
+| `quantidade_times` | `int4` |  Nullable |
+| `created_at` | `timestamptz` |  Nullable |
+| `campeao` | `uuid` |  Nullable |
+
+## Table `campeonato_time`
+
+### Columns
+
+| Name | Type | Constraints |
+|------|------|-------------|
+| `id` | `uuid` | Primary |
+| `id_campeonato` | `uuid` |  |
+| `id_time` | `uuid` |  |
+| `posicao_chave` | `int4` |  Nullable |
 | `created_at` | `timestamptz` |  Nullable |
 
 ## Custom Types / Enums
@@ -116,4 +147,16 @@ Modalidades
 | Policy | Command | Roles | Action | USING | WITH CHECK |
 |--------|---------|-------|--------|-------|------------|
 | `Ninguém pode ver admins` | SELECT | public | PERMISSIVE | `false` | — |
+
+### `campeonato`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `Acesso total campeonato` | ALL | public | PERMISSIVE | `true` | `true` |
+
+### `campeonato_time`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `Acesso total campeonato_time` | ALL | public | PERMISSIVE | `true` | `true` |
 
