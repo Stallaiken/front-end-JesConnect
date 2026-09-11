@@ -60,7 +60,6 @@ function Horarios({
   useEffect(() => {
     async function carregarDados() {
       setLoading(true);
-      setErroSupabase("");
 
       const { data: mods, error: errMods } = await supabase
         .from("modalidade")
@@ -151,11 +150,8 @@ function Horarios({
       return false;
     }
 
-    if (!jogo.time1?.id || !jogo.time2?.id) {
-      return false;
-    }
+    const idModalidadeTime1 = jogo.time1?.id_modalidade;
 
-    const idModalidadeTime1 = jogo.time1.id_modalidade;
     if (modalidadeId) {
       const mesmaModalidade =
         String(idModalidadeTime1) === String(modalidadeId);
@@ -223,12 +219,12 @@ function Horarios({
             <div className="col-time">
               <div className="box-logo">
                 <BandeiraImg
-                  logoURL={jogo.time1.logo_URL}
-                  nomeAlt={jogo.time1.Nome}
+                  logoURL={jogo.time1?.logo_URL}
+                  nomeAlt={jogo.time1?.Nome}
                 />
               </div>
 
-              <span className="nome-turma">{jogo.time1.Nome}</span>
+              <span className="nome-turma">{jogo.time1?.Nome || "Time 1"}</span>
             </div>
 
             <div className="placar-box">VS</div>
@@ -236,12 +232,12 @@ function Horarios({
             <div className="col-time">
               <div className="box-logo">
                 <BandeiraImg
-                  logoURL={jogo.time2.logo_URL}
-                  nomeAlt={jogo.time2.Nome}
+                  logoURL={jogo.time2?.logo_URL}
+                  nomeAlt={jogo.time2?.Nome}
                 />
               </div>
 
-              <span className="nome-turma">{jogo.time2.Nome}</span>
+              <span className="nome-turma">{jogo.time2?.Nome || "Time 2"}</span>
             </div>
           </div>
 
