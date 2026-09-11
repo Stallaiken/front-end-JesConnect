@@ -6,7 +6,7 @@ import {
   validarModalidade,
 } from "../../src/utils/testsSupa/modalidades.js";
 
-describe("Testes de API - Modalidades", () => {
+describe("Testes de Banco - Modalidades", () => {
   test("Test 5 - Busca das modalidades", async () => {
     const modalidades = await buscarModalidades();
 

@@ -5,7 +5,7 @@ import {
   validarTime,
 } from "../../src/utils/testsSupa/times.js";
 
-describe("Testes de API - Times", () => {
+describe("Testes de Banco - Times", () => {
   test("Test 1 - Busca dos times", async () => {
     const times = await buscarTimes();
 
