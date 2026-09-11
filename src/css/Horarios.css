@@ -279,3 +279,107 @@
 .btn-scroll-top:hover {
   background-color: #e05411;
 }
+.card-item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.btn-selecionar-editar {
+  background-color: #d97706;
+  color: #ffffff;
+  border: none;
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-selecionar-editar:hover {
+  background-color: #b45309;
+  transform: scale(1.02);
+}
+
+.admin-btn-acao.ativo {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+/* Posicionamento da Seta Fixa no Select */
+.select-modalidade-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select-modalidade {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 35px !important; /* Espaço para a seta não cobrir o texto */
+  cursor: pointer;
+}
+
+.seta-dropdown {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #fff;
+  font-size: 12px;
+}
+
+/* ==========================================
+   DIVISOR "EM BREVE" (CENTRALIZADO & TOTALMENTE ALINHADO)
+   ========================================== */
+.divisor-em-breve {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 32px 0 24px 0;
+  width: 100%;
+}
+
+.divisor-em-breve .linha-laranja {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 3px;
+  background-color: #f26522;
+  z-index: 1;
+}
+
+.divisor-em-breve .badge-divisor {
+  position: relative;
+  z-index: 2;
+  background-color: #f26522;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 5px 22px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 0 6px #18181c; /* Cor de fundo da página para cobrir a linha atrás do botão */
+}
+
+.aviso-selecao {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border: 2px solid #f26522;
+  border-radius: 10px;
+  background: #232429;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  box-sizing: border-box;
+}

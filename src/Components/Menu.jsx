@@ -4,7 +4,7 @@ import BarraAdmin from "./BarraAdmin";
 import "../css/Menu.css";
 import Sesi_Logo from "../assets/Sesi_Logo.png";
 
-function Menu() {
+function Menu({ acaoSelecao, onIniciarSelecao }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminBar, setShowAdminBar] = useState(false);
   const navigate = useNavigate();
@@ -13,12 +13,13 @@ function Menu() {
   const checarAdminStorage = useCallback(() => {
     const statusAdmin = localStorage.getItem("isAdmin") === "true";
     setIsAdmin(statusAdmin);
+    if (!statusAdmin) setShowAdminBar(false);
   }, []);
 
   useEffect(() => {
     checarAdminStorage();
 
-    // Escuta o evento disparado no login (Administrativo.jsx) e mudanças de aba
+    // Escuta o evento disparado no login/logout (Administrativo.jsx) e mudanças de aba
     window.addEventListener("admin-status-change", checarAdminStorage);
     window.addEventListener("storage", checarAdminStorage);
 
@@ -49,8 +50,6 @@ function Menu() {
           <Link to="/Administrativo" onClick={handleAdminClick}>
             Admin
           </Link>
-
-          
         </nav>
 
         <div className="logo-sesi-menu">
@@ -58,7 +57,12 @@ function Menu() {
         </div>
       </div>
 
-      {isAdmin && showAdminBar && <BarraAdmin />}
+      {isAdmin && showAdminBar && (
+        <BarraAdmin
+          acaoSelecao={acaoSelecao}
+          onIniciarSelecao={onIniciarSelecao}
+        />
+      )}
     </header>
   );
 }

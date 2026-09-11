@@ -1,0 +1,113 @@
+@import "./AdicionarTime.css";
+
+.texto-informativo {
+  color: #aaa;
+  padding: 10px 0;
+}
+
+.deletar-times-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.deletar-time-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.deletar-time-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deletar-time-nome {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.deletar-time-modalidade {
+  color: #888;
+}
+
+.btn-deletar-card {
+  background-color: #d9534f;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s ease;
+}
+
+.btn-deletar-card:hover {
+  opacity: 0.85;
+}
+
+/* Modal de Confirmação */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-box {
+  background-color: #222;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid #444;
+}
+
+.modal-titulo {
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.modal-texto {
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.modal-botoes {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-modal-cancelar {
+  background-color: #555;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-modal-confirmar {
+  background-color: #d9534f;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}

@@ -1,0 +1,231 @@
+/* ==========================================================================
+   PÁGINA ADICIONAR JOGO - TEMA ESCURO QUENTE COM DETALHES EM LARANJA
+   ========================================================================== */
+
+.add-jogo-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px 16px;
+  background-color: #0d0d0f; /* Grafite profundo bem aquecido */
+  box-sizing: border-box;
+}
+
+/* Card Principal com Borda de Destaque Laranja no Topo */
+.add-jogo-container {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #16161a;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 3px solid #ff6b00; /* Linha de assinatura Laranja */
+  border-radius: 20px;
+  padding: 32px 26px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4),
+              0 0 40px rgba(255, 107, 0, 0.05); /* Glow laranja suave ao fundo */
+  box-sizing: border-box;
+  animation: cardEmergir 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardEmergir {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Cabeçalho */
+.add-jogo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.add-jogo-titulo {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f4f4f5;
+  letter-spacing: -0.02em;
+}
+
+.btn-fechar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #a1a1aa;
+  transition: all 0.2s ease;
+}
+
+.btn-fechar:hover {
+  background: rgba(255, 107, 0, 0.15);
+  border-color: rgba(255, 107, 0, 0.3);
+  color: #ff6b00;
+  transform: rotate(90deg);
+}
+
+/* Formulário e Campo Cards */
+.input-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+
+.input-card label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Marcadorzinho Laranja ao lado do Label */
+.input-card label::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #ff6b00;
+}
+
+.input-card select {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #f4f4f5;
+  background-color: #101013;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  /* Setinha customizada laranja discreta */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ff6b00'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input-card select:hover:not(:disabled) {
+  border-color: #3f3f46;
+  background-color: #131317;
+}
+
+.input-card select:focus {
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.18);
+  background-color: #121215;
+}
+
+.input-card select:disabled {
+  background-color: #16161a;
+  border-color: #222226;
+  color: #52525b;
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-image: none;
+}
+
+.input-card select option {
+  background-color: #121215;
+  color: #f4f4f5;
+  padding: 10px;
+}
+
+/* Mensagens de Alerta */
+.error-msg {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.success-msg {
+  color: #4ade80;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Botão Laranja Vibrante */
+.btn-salvar-principal {
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #ff6b00 0%, #e65c00 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-salvar-principal:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.45);
+  background: linear-gradient(135deg, #ff7a1a 0%, #ff6b00 100%);
+}
+
+.btn-salvar-principal:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 107, 0, 0.3);
+}
+
+.btn-salvar-principal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: grayscale(40%);
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .add-jogo-page {
+    padding: 14px;
+  }
+
+  .add-jogo-container {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
+
+  .add-jogo-titulo {
+    font-size: 1.2rem;
+  }
+}

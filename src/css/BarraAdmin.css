@@ -1,3 +1,9 @@
+/* OBRIGATÓRIO: O elemento pai no seu Navbar/Header precisa dessa propriedade */
+.admin-painel-container-pai {
+  position: relative;
+}
+
+/* Painel Admin Flutuante */
 .admin-painel-bar {
   position: absolute;
   top: 100%;
@@ -14,14 +20,14 @@
   box-sizing: border-box;
 }
 
-.admin-secao-grupo {
+.admin-painel-bar .admin-secao-grupo {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
 }
 
-.admin-secao-titulo {
+.admin-painel-bar .admin-secao-titulo {
   color: #f26522;
   font-size: 0.75rem;
   font-weight: 900;
@@ -34,14 +40,14 @@
   text-align: left;
 }
 
-.admin-botoes-container {
+.admin-painel-bar .admin-botoes-container {
   display: flex;
   flex-direction: column;
   gap: 6px;
   width: 100%;
 }
 
-.admin-btn-acao {
+.admin-painel-bar .admin-btn-acao {
   background-color: #f26522;
   color: #ffffff;
   border: none;
@@ -55,10 +61,10 @@
   width: 100%;
 }
 
-.admin-btn-acao:hover {
+.admin-painel-bar .admin-btn-acao:hover {
   background-color: #d85416;
 }
 
-.admin-btn-acao:active {
+.admin-painel-bar .admin-btn-acao:active {
   transform: scale(0.97);
 }

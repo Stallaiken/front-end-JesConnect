@@ -1,179 +1,204 @@
+/* ==========================================
+   CHAVEAMENTO - CONTAINER PRINCIPAL
+   ========================================== */
 .chaveamento-container {
   width: 100%;
   min-height: 100vh;
   box-sizing: border-box;
-
-  padding: 30px;
-
-  background: #f5f5f5;
-  color: #111;
-
-  font-family: Arial, Helvetica, sans-serif;
+  padding: 24px 16px 80px 16px;
+  background-color: #18191c;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .chaveamento-container h1 {
-  margin: 0 0 25px;
-
-  font-size: 32px;
-  font-weight: 500;
+  margin: 0 0 20px 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* FILTROS */
-
+/* ==========================================
+   FILTROS & AÇÕES
+   ========================================== */
 .chaveamento-filtros {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 12px;
-
-  margin-bottom: 15px;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 600px;
 }
 
 .chaveamento-filtros select {
-  min-width: 220px;
+  min-width: 200px;
+  padding: 10px 18px;
+  border: 1px solid #33363f;
+  border-radius: 50px;
+  background-color: #232429;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
-  padding: 12px 15px;
-
-  border: 1px solid #c8c8c8;
-  border-radius: 8px;
-
-  background: white;
-
-  font-size: 16px;
+.chaveamento-filtros select:focus {
+  border-color: #f26522;
 }
 
 .chaveamento-filtros button {
-  padding: 12px 18px;
-
+  padding: 10px 22px;
   border: none;
-  border-radius: 8px;
-
-  background: #f26522;
-  color: white;
-
-  font-size: 15px;
-  font-weight: bold;
-
+  border-radius: 50px;
+  background-color: #f26522;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(242, 101, 34, 0.3);
 }
 
 .chaveamento-filtros button:hover {
-  opacity: 0.9;
+  background-color: #e05411;
+  transform: translateY(-1px);
 }
 
 .chaveamento-filtros button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .chaveamento-mensagem {
-  margin: 10px 0;
-
-  color: #555;
-  font-size: 15px;
+  margin: 8px 0;
+  color: #a0a5b1;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 .quantidade-times {
   margin-bottom: 20px;
-
-  color: #666;
-  font-size: 14px;
+  color: #f26522;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
 }
 
-/* BRACKET */
-
+/* ==========================================
+   BRACKET / CHAVEAMENTO (ROLAGEM HORIZONTAL)
+   ========================================== */
 .bracket {
   width: 100%;
-
   display: flex;
   align-items: flex-start;
-  gap: 55px;
-
+  gap: 40px;
   overflow-x: auto;
   overflow-y: hidden;
-
-  padding: 30px 10px 50px;
-
+  padding: 20px 10px 40px 10px;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* CADA FASE */
+/* BARRA DE ROLAGEM CUSTOMIZADA */
+.bracket::-webkit-scrollbar {
+  height: 8px;
+}
 
+.bracket::-webkit-scrollbar-track {
+  background: #232429;
+  border-radius: 10px;
+}
+
+.bracket::-webkit-scrollbar-thumb {
+  background: #f26522;
+  border-radius: 10px;
+}
+
+.bracket::-webkit-scrollbar-thumb:hover {
+  background: #e05411;
+}
+
+/* ==========================================
+   FASES DO TORNEIO
+   ========================================== */
 .fase {
-  min-width: 260px;
-  width: 260px;
-
+  min-width: 240px;
+  width: 240px;
   flex-shrink: 0;
 }
 
 .fase h2 {
-  margin: 0 0 25px;
-
+  margin: 0 0 20px 0;
   text-align: center;
-
-  font-size: 17px;
-  font-weight: 600;
-
-  color: #222;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #f26522;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
 }
-
-/*
-  Os jogos são distribuídos verticalmente.
-*/
 
 .jogos-fase {
   display: flex;
   flex-direction: column;
-
-  gap: 25px;
+  gap: 24px;
 }
 
-/* JOGO */
-
+/* ==========================================
+   MATCH / CONFRONTO
+   ========================================== */
 .match {
   width: 100%;
-
   box-sizing: border-box;
-
-  padding: 10px;
-
-  background: transparent;
-
+  padding: 8px;
+  background-color: #232429;
+  border-radius: 12px;
   position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid #2e3038;
 }
-
-/* TEXTO FIM DO JOGO */
 
 .match-status {
-  margin-bottom: 8px;
-
-  color: #777;
-
-  font-size: 13px;
+  margin-bottom: 6px;
+  color: #a0a5b1;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
 }
 
-/* TIME */
-
+/* ==========================================
+   TIME / PARTICIPANTE
+   ========================================== */
 .time {
   width: 100%;
-  min-height: 48px;
-
+  min-height: 44px;
   box-sizing: border-box;
-
   display: flex;
   align-items: center;
-
   gap: 10px;
-
-  padding: 7px 10px;
-
-  border: 1px solid #bfc6d2;
+  padding: 6px 12px;
+  border: 1px solid #383b45;
   border-radius: 8px;
-
-  background: white;
-
+  background-color: #1a1b20;
+  color: #ffffff;
   cursor: grab;
-
-  transition: 0.15s;
+  transition: all 0.2s ease;
 }
 
 .time:active {
@@ -181,162 +206,106 @@
 }
 
 .time:hover {
-  border-color: #68758a;
-  transform: translateX(2px);
+  border-color: #f26522;
+  transform: translateX(3px);
+  background-color: #22242c;
 }
 
 .logo-time {
-  width: 30px;
-  height: 30px;
-
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-
   flex-shrink: 0;
 }
 
 .time span {
   overflow: hidden;
-
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
+/* TIME VAZIO (SLOT DISPONÍVEL) */
 .time-vazio {
-  color: #999;
-
-  background: #fafafa;
-
+  color: #666a75;
+  background-color: rgba(255, 255, 255, 0.02);
   cursor: default;
-
-  border-style: dashed;
+  border: 1px dashed #383b45;
 }
 
 .time-vazio:hover {
   transform: none;
+  border-color: #383b45;
+  background-color: rgba(255, 255, 255, 0.02);
 }
-
-/* LOGO VAZIA */
 
 .logo-vazia {
-  width: 30px;
-  height: 30px;
-
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
-
-  background: #e7e7e7;
-  color: #888;
-
-  font-size: 16px;
+  background-color: #2b2d36;
+  color: #666a75;
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
-/* VS */
-
+/* DIVISOR VS */
 .vs {
-  height: 22px;
-
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  color: #777;
-
-  font-size: 12px;
-  font-weight: bold;
+  color: #f26522;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
-/* BARRA DE ROLAGEM */
-
-.bracket::-webkit-scrollbar {
-  height: 9px;
-}
-
-.bracket::-webkit-scrollbar-track {
-  background: #ddd;
-  border-radius: 10px;
-}
-
-.bracket::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.bracket::-webkit-scrollbar-thumb:hover {
-  background: #666;
-}
-
-/* DESKTOP */
-
+/* ==========================================
+   RESPONSIVIDADE (DESKTOP)
+   ========================================== */
 @media (min-width: 900px) {
-
-  /*
-    Cria um espaçamento maior entre os jogos
-    conforme a fase avança.
-  */
-
-  .fase:nth-child(2) {
-    padding-top: 80px;
-  }
-
-  .fase:nth-child(3) {
-    padding-top: 160px;
-  }
-
-  .fase:nth-child(4) {
-    padding-top: 240px;
-  }
-
-  .fase:nth-child(5) {
-    padding-top: 320px;
-  }
-
-  .fase:nth-child(6) {
-    padding-top: 400px;
-  }
-
+  .fase:nth-child(2) { padding-top: 60px; }
+  .fase:nth-child(3) { padding-top: 130px; }
+  .fase:nth-child(4) { padding-top: 210px; }
+  .fase:nth-child(5) { padding-top: 290px; }
+  .fase:nth-child(6) { padding-top: 370px; }
 }
 
-/* CELULAR */
-
+/* ==========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================== */
 @media (max-width: 700px) {
-
   .chaveamento-container {
-    padding: 20px 10px;
+    padding: 16px 8px 60px 8px;
   }
 
   .chaveamento-container h1 {
-    font-size: 27px;
+    font-size: 1.4rem;
   }
 
   .chaveamento-filtros {
     flex-direction: column;
-    align-items: stretch;
-  }
-
-  .chaveamento-filtros select {
     width: 100%;
   }
 
+  .chaveamento-filtros select,
   .chaveamento-filtros button {
     width: 100%;
   }
 
   .bracket {
-    gap: 35px;
-
-    padding-left: 5px;
-    padding-right: 5px;
+    gap: 20px;
+    padding: 10px 4px 30px 4px;
   }
 
   .fase {
-    min-width: 240px;
-    width: 240px;
+    min-width: 210px;
+    width: 210px;
   }
 
   .fase:nth-child(n) {
@@ -344,26 +313,22 @@
   }
 
   .jogos-fase {
-    gap: 20px;
+    gap: 16px;
   }
-
 }
 
-/* CELULAR PEQUENO */
-
 @media (max-width: 400px) {
-
   .fase {
-    min-width: 220px;
-    width: 220px;
+    min-width: 190px;
+    width: 190px;
   }
 
   .time {
-    min-height: 45px;
+    min-height: 40px;
+    padding: 4px 8px;
   }
 
   .time span {
-    font-size: 14px;
+    font-size: 0.78rem;
   }
-
 }

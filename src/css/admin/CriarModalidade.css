@@ -1,0 +1,179 @@
+.admin-modalidades-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 16px;
+  min-height: calc(100vh - 70px);
+  background-color: #1a1b1e;
+  color: #ffffff;
+}
+
+.admin-card-modalidades {
+  background-color: #22242a;
+  width: 100%;
+  max-width: 550px;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.admin-titulo-secao {
+  color: #f26522;
+  font-size: 1.2rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.mensagem-status {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.mensagem-status.sucesso {
+  background-color: rgba(46, 125, 50, 0.2);
+  border: 1px solid #4caf50;
+  color: #81c784;
+}
+
+.mensagem-status.erro {
+  background-color: rgba(198, 40, 40, 0.2);
+  border: 1px solid #e53935;
+  color: #ef5350;
+}
+
+.form-modalidade {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo-grupo label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #cccccc;
+  text-transform: uppercase;
+}
+
+.campo-grupo input,
+.campo-grupo select {
+  background-color: #1a1b1e;
+  border: 1px solid #3d404a;
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.campo-grupo input:focus,
+.campo-grupo select:focus {
+  border-color: #f26522;
+}
+
+.btn-salvar-modalidade {
+  background-color: #f26522;
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 8px;
+}
+
+.btn-salvar-modalidade:hover {
+  background-color: #d85416;
+}
+
+.btn-salvar-modalidade:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* LISTAGEM */
+.container-lista-modalidades {
+  margin-top: 32px;
+  border-top: 1px solid #3d404a;
+  padding-top: 20px;
+}
+
+.subtitulo-lista {
+  font-size: 0.9rem;
+  color: #f26522;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.lista-modalidades {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-modalidade {
+  background-color: #1a1b1e;
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #2d3038;
+}
+
+.info-modalidade {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nome-mod {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.genero-mod {
+  font-size: 0.75rem;
+  color: #aaaaaa;
+}
+
+.btn-deletar-mod {
+  background-color: #c62828;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-deletar-mod:hover {
+  background-color: #b71c1c;
+}
+
+.texto-vazio {
+  font-size: 0.8rem;
+  color: #888888;
+  text-align: center;
+  margin-top: 10px;
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Administrativo.css";
 
@@ -7,7 +7,13 @@ function Administrativo() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const statusAdmin = localStorage.getItem("isAdmin") === "true";
+    setIsAdmin(statusAdmin);
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -15,18 +21,25 @@ function Administrativo() {
 
     const usuarioLimpo = usuario.trim();
 
-    // Validação direta das credenciais e salvamento no localStorage
     if (usuarioLimpo === "admin" && senha === "minhasenha123") {
       localStorage.setItem("isAdmin", "true");
       localStorage.setItem("usuarioLogado", usuarioLimpo);
 
-      // Notifica os demais componentes (Menu.jsx, etc) sobre a mudança de status
+      // Dispara o evento para atualizar o Menu.jsx instantaneamente
       window.dispatchEvent(new Event("admin-status-change"));
 
       navigate("/Horarios");
     } else {
       setErro("Usuário ou senha incorretos.");
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("usuarioLogado");
+    setIsAdmin(false);
+
+    window.dispatchEvent(new Event("admin-status-change"));
   };
 
   return (
@@ -36,44 +49,63 @@ function Administrativo() {
       </div>
 
       <div className="admin-card">
-        <h2 className="admin-subtitulo">Login</h2>
-
-        <form className="admin-form" onSubmit={handleLogin}>
-          {erro && <p className="admin-erro">{erro}</p>}
-
-          <div className="input-group">
-            <input
-              type="text"
-              className="admin-input"
-              placeholder="Usuário"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <input
-              type={mostrarSenha ? "text" : "password"}
-              className="admin-input"
-              placeholder="Senha"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              required
-            />
+        {isAdmin ? (
+          <div style={{ textAlign: "center" }}>
+            <h2 className="admin-subtitulo">Sessão Ativa</h2>
+            <p style={{ color: "#aaa", marginBottom: "20px" }}>
+              Você está autenticado como administrador.
+            </p>
             <button
               type="button"
-              className="toggle-password-btn"
-              onClick={() => setMostrarSenha((prev) => !prev)}
+              className="admin-button"
+              onClick={handleLogout}
+              style={{ backgroundColor: "#d9534f" }}
             >
-              {mostrarSenha ? "Ocultar" : "Mostrar"}
+              Sair do Painel
             </button>
           </div>
+        ) : (
+          <>
+            <h2 className="admin-subtitulo">Login</h2>
 
-          <button type="submit" className="admin-button">
-            Entrar
-          </button>
-        </form>
+            <form className="admin-form" onSubmit={handleLogin}>
+              {erro && <p className="admin-erro">{erro}</p>}
+
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="admin-input"
+                  placeholder="Usuário"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <input
+                  type={mostrarSenha ? "text" : "password"}
+                  className="admin-input"
+                  placeholder="Senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password-btn"
+                  onClick={() => setMostrarSenha((prev) => !prev)}
+                >
+                  {mostrarSenha ? "Ocultar" : "Mostrar"}
+                </button>
+              </div>
+
+              <button type="submit" className="admin-button">
+                Entrar
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );

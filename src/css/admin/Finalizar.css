@@ -1,0 +1,259 @@
+/* ==========================================================================
+   ESTILO FINALIZAR - COM ESCOPO ISOLADO
+   ========================================================================== */
+
+.finalizar-container-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #ededed;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+  font-family: sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   LISTA DE JOGOS (ETAPA INICIAL NA MESMA TELA)
+   -------------------------------------------------------------------------- */
+.finalizar-container-page .lista-selecao-box {
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+.finalizar-container-page .titulo-selecao {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
+
+.finalizar-container-page .cards-jogos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.finalizar-container-page .card-jogo-andamento {
+  background: #232328;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.finalizar-container-page .card-jogo-andamento:hover {
+  transform: translateY(-2px);
+  background: #2a2a30;
+}
+
+.finalizar-container-page .modalidade-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ff6b00;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.finalizar-container-page .times-confronto {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.finalizar-container-page .vs-divisor {
+  color: #ff6b00;
+}
+
+.finalizar-container-page .texto-status {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* --------------------------------------------------------------------------
+   PAINEL DE PLACAR
+   -------------------------------------------------------------------------- */
+.finalizar-container-page .painel-jogo-ativo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+}
+
+.finalizar-container-page .btn-voltar-selecao {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: color 0.2s;
+}
+
+.finalizar-container-page .btn-voltar-selecao:hover {
+  color: #ff6b00;
+}
+
+.finalizar-container-page .placar-card-fundo {
+  background-color: #232328;
+  border-radius: 12px;
+  width: 100%;
+  padding: 24px 20px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+
+.finalizar-container-page .time-coluna {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90px;
+}
+
+.finalizar-container-page .square-logo {
+  width: 52px;
+  height: 52px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.finalizar-container-page .square-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ISOLADO PARA NÃO AFETAR O HORARIOS.CSS */
+.finalizar-container-page .nome-turma {
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+
+.finalizar-container-page .placar-texto {
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 500;
+  letter-spacing: 4px;
+}
+
+.finalizar-container-page .botoes-controles-row {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 18px;
+}
+
+.finalizar-container-page .botoes-time {
+  display: flex;
+  gap: 12px;
+  width: 90px;
+  justify-content: center;
+}
+
+.finalizar-container-page .btn-quadrado {
+  width: 44px;
+  height: 44px;
+  background-color: #232328;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.6rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.finalizar-container-page .btn-quadrado:hover {
+  background-color: #33333b;
+  color: #ff6b00;
+}
+
+.finalizar-container-page .btn-quadrado:active {
+  transform: scale(0.95);
+}
+
+.finalizar-container-page .btn-finalizar-laranja {
+  margin-top: 40px;
+  background-color: #ff6b00;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 32px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.finalizar-container-page .btn-finalizar-laranja:hover:not(:disabled) {
+  background-color: #e56000;
+  transform: translateY(-1px);
+}
+
+.finalizar-container-page .btn-finalizar-laranja:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.finalizar-container-page .btn-topo-laranja {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 38px;
+  height: 38px;
+  background-color: #ff6b00;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.finalizar-container-page .btn-topo-laranja:hover {
+  transform: translateY(-2px);
+}
+
+.finalizar-container-page .msg-erro {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-top: 16px;
+  font-weight: 600;
+}
