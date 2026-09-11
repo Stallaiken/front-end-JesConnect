@@ -1,0 +1,70 @@
+.admin-painel-bar {
+  background-color: #ffffff;
+  border-top: 2px solid #e0e0e0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  max-height: 80vh;
+  overflow-y: auto;
+  transition: background-color 0.3s ease;
+}
+
+/* Suporte ao tema escuro do computador */
+@media (prefers-color-scheme: dark) {
+  .admin-painel-bar {
+    background-color: #1e2025;
+    border-top: 2px solid #2d3038;
+  }
+}
+
+.admin-secao-grupo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+}
+
+.admin-secao-titulo {
+  color: #f26522;
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.admin-botoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.admin-btn-acao {
+  width: 100%;
+  height: 42px;
+  background-color: #f26522;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.admin-btn-acao:hover {
+  background-color: #d95318;
+}
+
+.admin-btn-acao:active {
+  transform: scale(0.97);
+}

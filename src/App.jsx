@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Menu from "./Components/Menu.jsx";
 
-
+import BarraAdmin from "./Components/BarraAdmin.jsx";
 import Administrativo from "./Pages/Administrativo.jsx";
 import Erro404 from "./Pages/Erro404.jsx";
 import Visitante from "./Pages/Visitante.jsx";
