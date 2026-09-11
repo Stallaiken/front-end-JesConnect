@@ -5,7 +5,7 @@ import Bracket from "./chaveamento/Bracket.jsx";
 
 const bandeirasModules = import.meta.glob(
   "../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  { eager: true }
+  { eager: true },
 );
 
 const BANDEIRAS = {};
@@ -69,7 +69,7 @@ function Chaveamento() {
       setMensagemTimes(
         listaTimes.length === 0
           ? "Nenhum time cadastrado nessa modalidade."
-          : `${listaTimes.length} times encontrados.`
+          : `${listaTimes.length} times encontrados.`,
       );
 
       await carregarCampeonatoExistente(listaTimes);
@@ -115,13 +115,15 @@ function Chaveamento() {
   async function carregarConfrontos(campeonatoId, listaTimes = times) {
     const { data, error } = await supabase
       .from("confronto")
-      .select(`
+      .select(
+        `
         id, created_at, time1, time2, finalizado, horario, ao_vivo, id_campeonato,
         fase, ordem, proximo_confronto, lado_proximo, origem_time1, origem_time2,
         time1:time1 (id, Nome, logo_URL, id_modalidade),
         time2:time2 (id, Nome, logo_URL, id_modalidade),
         detalhes (id, confronto_id, ptn_time1, ptn_time2, local, vencedor)
-      `)
+      `,
+      )
       .eq("id_campeonato", campeonatoId)
       .order("fase")
       .order("ordem");
@@ -194,9 +196,7 @@ function Chaveamento() {
         const time1 =
           quantidadeTimesNaFase === totalVagas ? primeiraFase[i * 2] : null;
         const time2 =
-          quantidadeTimesNaFase === totalVagas
-            ? primeiraFase[i * 2 + 1]
-            : null;
+          quantidadeTimesNaFase === totalVagas ? primeiraFase[i * 2 + 1] : null;
 
         confrontos.push({
           id: `novo-${fase}-${i + 1}-${Date.now()}-${i}`,
@@ -227,10 +227,10 @@ function Chaveamento() {
 
       const proximaFase = fases[indiceFaseAtual + 1];
       const jogosProximaFase = confrontos.filter(
-        (item) => item.fase === proximaFase
+        (item) => item.fase === proximaFase,
       );
       const jogosFaseAtual = confrontos.filter(
-        (item) => item.fase === jogo.fase
+        (item) => item.fase === jogo.fase,
       );
 
       const indiceDoJogo = jogosFaseAtual.indexOf(jogo);
@@ -265,7 +265,7 @@ function Chaveamento() {
 
     if (campeonatoAtual) {
       setMensagemAcao(
-        "Já existe um chaveamento em andamento. Use Reiniciar Chaveamento para criar outro."
+        "Já existe um chaveamento em andamento. Use Reiniciar Chaveamento para criar outro.",
       );
       return;
     }
@@ -334,7 +334,7 @@ function Chaveamento() {
         if (!jogo.proximo_confronto) continue;
 
         const proximoOriginal = estrutura.find(
-          (item) => item.id === jogo.proximo_confronto
+          (item) => item.id === jogo.proximo_confronto,
         );
 
         if (!proximoOriginal) continue;
@@ -447,8 +447,8 @@ function Chaveamento() {
 
     setChave((anterior) =>
       anterior.map((jogo) =>
-        jogo.id === confrontoId ? { ...jogo, ao_vivo: valor } : jogo
-      )
+        jogo.id === confrontoId ? { ...jogo, ao_vivo: valor } : jogo,
+      ),
     );
   }
 
@@ -459,8 +459,8 @@ function Chaveamento() {
       confronto.time1?.id === vencedorId
         ? confronto.time1
         : confronto.time2?.id === vencedorId
-        ? confronto.time2
-        : null;
+          ? confronto.time2
+          : null;
 
     if (!timeVencedor) return;
 
@@ -520,7 +520,8 @@ function Chaveamento() {
       if (confronto.proximo_confronto) {
         const proximo = chave.find((j) => j.id === confronto.proximo_confronto);
         if (proximo) {
-          const campoUpdate = confronto.lado_proximo === "time1" ? "time1" : "time2";
+          const campoUpdate =
+            confronto.lado_proximo === "time1" ? "time1" : "time2";
           await supabase
             .from("confronto")
             .update({ [campoUpdate]: vencedorId })
@@ -545,7 +546,7 @@ function Chaveamento() {
     }
 
     const confirmar = window.confirm(
-      "Tem certeza que deseja reiniciar o chaveamento? O chaveamento atual será encerrado e um novo poderá ser criado."
+      "Tem certeza que deseja reiniciar o chaveamento? O chaveamento atual será encerrado e um novo poderá ser criado.",
     );
 
     if (!confirmar) return;
@@ -607,7 +608,7 @@ function Chaveamento() {
               setMensagemTimes(
                 listaTimes.length === 0
                   ? "Nenhum time cadastrado nessa modalidade."
-                  : `${listaTimes.length} times encontrados.`
+                  : `${listaTimes.length} times encontrados.`,
               );
 
               const { data: campeonato, error: erroCampeonato } = await supabase
@@ -626,7 +627,9 @@ function Chaveamento() {
                 await carregarConfrontos(campeonato.id, listaTimes);
                 setMensagemAcao("Chaveamento existente carregado.");
               } else {
-                setMensagemAcao("Nenhum chaveamento criado para essa modalidade.");
+                setMensagemAcao(
+                  "Nenhum chaveamento criado para essa modalidade.",
+                );
               }
             } catch (erro) {
               console.error(erro);
@@ -655,11 +658,7 @@ function Chaveamento() {
         <button
           className="chaveamento-btn chaveamento-btn-gerar"
           onClick={gerarChaveamento}
-          disabled={
-            carregando ||
-            times.length < 2 ||
-            campeonatoAtual !== null
-          }
+          disabled={carregando || times.length < 2 || campeonatoAtual !== null}
         >
           Gerar Chaveamento
         </button>
@@ -675,13 +674,9 @@ function Chaveamento() {
         )}
       </div>
 
-      {mensagemTimes && (
-        <p className="chaveamento-mensagem">{mensagemTimes}</p>
-      )}
+      {mensagemTimes && <p className="chaveamento-mensagem">{mensagemTimes}</p>}
 
-      {mensagemAcao && (
-        <p className="chaveamento-mensagem">{mensagemAcao}</p>
-      )}
+      {mensagemAcao && <p className="chaveamento-mensagem">{mensagemAcao}</p>}
 
       {campeonatoAtual && (
         <p className="chaveamento-mensagem chaveamento-mensagem-info">
