@@ -14,7 +14,6 @@ for (const path in bandeirasModules) {
   BANDEIRAS[fileName] = bandeirasModules[path].default;
 }
 
-// Componente isolado para a Imagem da Bandeira
 function BandeiraImg({ logoURL, nomeAlt }) {
   const [erroImg, setErroImg] = useState(false);
   const imgUrl = logoURL ? BANDEIRAS[logoURL] || logoURL : null;
@@ -33,7 +32,11 @@ function BandeiraImg({ logoURL, nomeAlt }) {
   );
 }
 
-function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo }) {
+function Horarios({
+  acaoSelecao = null,
+  jogoSelecionado = null,
+  onSelecionarJogo,
+}) {
   const [generoFiltro, setGeneroFiltro] = useState("M");
   const [modalidadeId, setModalidadeId] = useState("");
   const [modalidades, setModalidades] = useState([]);
@@ -49,7 +52,9 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
 
     window.addEventListener("scroll", handleScroll);
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -64,6 +69,7 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
       if (errMods) {
         console.error("Erro modalidades:", errMods);
       }
+
       setModalidades(mods || []);
 
       const { data: confs, error: errConfs } = await supabase
@@ -81,13 +87,13 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
             id_modalidade
           ),
 
-            time2:time2 (
-              id,
-              Nome,
-              logo_URL,
-              id_modalidade
-            )
-          `);
+          time2:time2 (
+            id,
+            Nome,
+            logo_URL,
+            id_modalidade
+          )
+        `);
 
       if (errConfs) {
         console.error("Erro confrontos:", errConfs);
@@ -95,23 +101,12 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
       } else {
         setConfrontos(confs || []);
       }
+
       setLoading(false);
     }
 
     carregarDados();
   }, []);
-
-  const renderBandeira = (logoURL, nomeAlt) => {
-    if (!logoURL) return null;
-    const imgUrl = BANDEIRAS[logoURL] || logoURL;
-    return (
-      <img
-        src={imgUrl}
-        alt={nomeAlt || "Bandeira"}
-        className="bandeira-img"
-      />
-    );
-  };
 
   const subirParaTopo = () => {
     window.scrollTo({
@@ -120,7 +115,40 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
     });
   };
 
-  // Filtragem dos confrontos mantendo a regra corrigida
+  const handleSelecao = (evento, jogo) => {
+    evento?.stopPropagation();
+
+    if (typeof onSelecionarJogo === "function") {
+      onSelecionarJogo(jogo);
+    }
+  };
+
+  const jogoPodeSerSelecionado = (jogo) => {
+    if (!acaoSelecao) {
+      return false;
+    }
+
+    if (acaoSelecao === "comecar") {
+      return jogo.ao_vivo !== true;
+    }
+
+    if (
+      acaoSelecao === "editar" ||
+      acaoSelecao === "finalizar"
+    ) {
+      return jogo.ao_vivo === true;
+    }
+
+    return acaoSelecao === "deletar";
+  };
+
+  const textoSelecao = {
+    editar: "Selecione uma partida ao vivo para editar",
+    deletar: "Selecione a partida que deseja excluir",
+    comecar: "Selecione uma partida em breve para começar",
+    finalizar: "Selecione uma partida ao vivo para finalizar",
+  }[acaoSelecao];
+
   const confrontosFiltrados = confrontos.filter((jogo) => {
     if (jogo.finalizado === true) {
       return false;
@@ -128,7 +156,6 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
 
     const idModalidadeTime1 = jogo.time1?.id_modalidade;
 
-    // FILTRO DE MODALIDADE
     if (modalidadeId) {
       const mesmaModalidade =
         String(idModalidadeTime1) === String(modalidadeId);
@@ -138,7 +165,6 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
       }
     }
 
-    // ENCONTRAR A MODALIDADE DO TIME
     const modalidadeDoTime = modalidades.find(
       (modalidade) =>
         String(modalidade.id) === String(idModalidadeTime1)
@@ -148,25 +174,118 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
       modalidadeDoTime?.genero || ""
     ).toUpperCase();
 
-    // FILTRO DE GÊNERO
-    if (modGenero && modGenero !== "NOT" && modGenero !== "N") {
-      if (modGenero !== generoFiltro) return false;
+    if (
+      modGenero &&
+      modGenero !== "NOT" &&
+      modGenero !== "N"
+    ) {
+      if (modGenero !== generoFiltro) {
+        return false;
+      }
     }
 
     return true;
   });
 
-  // Divisão entre Ao Vivo e Em Breve
-  const aoVivoFiltrados = confrontosFiltrados.filter((j) => j.ao_vivo === true);
-  const emBreveFiltrados = confrontosFiltrados.filter((j) => !j.ao_vivo);
+  const aoVivoFiltrados = confrontosFiltrados.filter(
+    (jogo) => jogo.ao_vivo === true
+  );
+
+  const emBreveFiltrados = confrontosFiltrados.filter(
+    (jogo) => jogo.ao_vivo !== true
+  );
+
+  const renderizarCard = (jogo, aoVivo) => {
+    const selecionado = jogoSelecionado?.id === jogo.id;
+    const selecionavel = jogoPodeSerSelecionado(jogo);
+
+    return (
+      <div key={jogo.id} className="card-item-wrapper">
+        <div
+          className={`card-partida ${aoVivo ? "live" : ""} ${
+            selecionado ? "card-selecionado" : ""
+          }`}
+          onClick={(evento) => {
+            if (selecionavel) {
+              handleSelecao(evento, jogo);
+            }
+          }}
+          style={{
+            cursor: selecionavel ? "pointer" : "default",
+          }}
+        >
+          <span
+            className={
+              aoVivo
+                ? "badge-status-live"
+                : "badge-status-upcoming"
+            }
+          >
+            {aoVivo ? (
+              <>
+                AO VIVO <span className="dot">•</span>
+              </>
+            ) : (
+              "EM BREVE •"
+            )}
+          </span>
+
+          <div className="conteudo-partida">
+            <div className="col-time">
+              <div className="box-logo">
+                <BandeiraImg
+                  logoURL={jogo.time1?.logo_URL}
+                  nomeAlt={jogo.time1?.Nome}
+                />
+              </div>
+
+              <span className="nome-turma">
+                {jogo.time1?.Nome || "Time 1"}
+              </span>
+            </div>
+
+            <div className="placar-box">VS</div>
+
+            <div className="col-time">
+              <div className="box-logo">
+                <BandeiraImg
+                  logoURL={jogo.time2?.logo_URL}
+                  nomeAlt={jogo.time2?.Nome}
+                />
+              </div>
+
+              <span className="nome-turma">
+                {jogo.time2?.Nome || "Time 2"}
+              </span>
+            </div>
+          </div>
+
+          <div className="badge-quadra">QUADRA</div>
+        </div>
+
+        {selecionavel && (
+          <button
+            type="button"
+            className="btn-selecionar-editar"
+            onClick={(evento) => handleSelecao(evento, jogo)}
+          >
+            {selecionado ? "SELECIONADO" : "SELECIONAR"}
+          </button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="horarios-container">
-      {/* FILTROS */}
+      {textoSelecao && (
+        <div className="aviso-selecao">
+          {textoSelecao}
+        </div>
+      )}
+
       <div className="filtros-wrapper">
-
         <div className="genero-toggle">
-
           <button
             type="button"
             className={`btn-genero ${
@@ -186,29 +305,32 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
           >
             FEM
           </button>
-
         </div>
 
         <div className="select-modalidade-wrapper">
-
           <select
             value={modalidadeId}
-            onChange={(e) => setModalidadeId(e.target.value)}
+            onChange={(evento) =>
+              setModalidadeId(evento.target.value)
+            }
             className="select-modalidade"
           >
             <option value="">MODALIDADE ↓</option>
+
             {modalidades.map((modalidade) => (
-              <option key={modalidade.id} value={modalidade.id}>
-                {modalidade.nome.toUpperCase()}
-                {modalidade.genero && modalidade.genero !== "Not"
+              <option
+                key={modalidade.id}
+                value={modalidade.id}
+              >
+                {modalidade.nome?.toUpperCase()}
+                {modalidade.genero &&
+                modalidade.genero !== "Not"
                   ? ` (${modalidade.genero})`
                   : ""}
               </option>
             ))}
-
           </select>
         </div>
-
       </div>
 
       {loading ? (
@@ -224,116 +346,40 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
         </p>
       ) : (
         <>
-
-          {/* CARDS AO VIVO */}
           <div className="lista-cards">
-
             {aoVivoFiltrados.length > 0 ? (
-              aoVivoFiltrados.map((jogo) => (
-                <div key={jogo.id} className="card-partida live">
-                  <span className="badge-status-live">
-                    AO VIVO <span className="dot">•</span>
-                  </span>
-
-                  <div className="conteudo-partida">
-                    <div className="col-time">
-                      <div className="box-logo">
-                        {renderBandeira(
-                          jogo.time1?.logo_URL,
-                          jogo.time1?.Nome
-                        )}
-                      </div>
-                      <span className="nome-turma">
-                        {jogo.time1?.Nome || "Time 1"}
-                      </span>
-                    </div>
-
-                    <div className="placar-box">VS</div>
-
-                    <div className="col-time">
-                      <div className="box-logo">
-                        {renderBandeira(
-                          jogo.time2?.logo_URL,
-                          jogo.time2?.Nome
-                        )}
-                      </div>
-                      <span className="nome-turma">
-                        {jogo.time2?.Nome || "Time 2"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="badge-quadra">QUADRA</div>
-                </div>
-              ))
+              aoVivoFiltrados.map((jogo) =>
+                renderizarCard(jogo, true)
+              )
             ) : (
-              <p className="loading-text">Nenhuma partida ao vivo no momento.</p>
+              <p className="loading-text">
+                Nenhuma partida ao vivo no momento.
+              </p>
             )}
-
           </div>
 
-          {/* DIVISOR EM BREVE */}
           <div className="divisor-em-breve">
-
             <div className="linha-laranja" />
-
             <span className="badge-divisor">
               EM BREVE
             </span>
-
           </div>
 
-          {/* CARDS EM BREVE */}
           <div className="lista-cards">
-
             {emBreveFiltrados.length > 0 ? (
-              emBreveFiltrados.map((jogo) => (
-                <div key={jogo.id} className="card-partida">
-                  <span className="badge-status-upcoming">EM BREVE •</span>
-
-                  <div className="conteudo-partida">
-                    <div className="col-time">
-                      <div className="box-logo">
-                        {renderBandeira(
-                          jogo.time1?.logo_URL,
-                          jogo.time1?.Nome
-                        )}
-                      </div>
-                      <span className="nome-turma">
-                        {jogo.time1?.Nome || "Time 1"}
-                      </span>
-                    </div>
-
-                    <div className="placar-box">VS</div>
-
-                    <div className="col-time">
-                      <div className="box-logo">
-                        {renderBandeira(
-                          jogo.time2?.logo_URL,
-                          jogo.time2?.Nome
-                        )}
-                      </div>
-                      <span className="nome-turma">
-                        {jogo.time2?.Nome || "Time 2"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="badge-quadra">QUADRA</div>
-                </div>
-              ))
+              emBreveFiltrados.map((jogo) =>
+                renderizarCard(jogo, false)
+              )
             ) : (
-              <p className="loading-text">Nenhum confronto agendado em breve.</p>
+              <p className="loading-text">
+                Nenhum confronto agendado em breve.
+              </p>
             )}
-
           </div>
-
         </>
       )}
 
-      {/* BOTÃO VOLTAR AO TOPO */}
       {mostrarSeta && (
-
         <button
           type="button"
           className="btn-scroll-top"
@@ -342,9 +388,7 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
         >
           ↑
         </button>
-
       )}
-
     </div>
   );
 }
