@@ -79,3 +79,7 @@
     margin-left: 0; /* Mantém a sequência sem quebrar a rolagem horizontal */
   }
 }
+.menu-container-header {
+  position: relative; /* Garante que o painel absoluto se alinhe a este container */
+  width: 100%;
+}

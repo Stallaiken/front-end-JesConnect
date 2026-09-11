@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
 import BarraAdmin from "./BarraAdmin";
 import "../css/Menu.css";
 import Sesi_Logo from "../assets/Sesi_Logo.png";
@@ -10,35 +9,24 @@ function Menu() {
   const [showAdminBar, setShowAdminBar] = useState(false);
   const navigate = useNavigate();
 
-  const checarAdminNoBanco = useCallback(async () => {
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-    if (!usuarioLogado) {
-      setIsAdmin(false);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("usuarios")
-      .select("is_admin")
-      .eq("usuario", usuarioLogado)
-      .maybeSingle();
-
-    if (!error && data?.is_admin) {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
-    }
+  // Função para verificar o status diretamente no localStorage
+  const checarAdminStorage = useCallback(() => {
+    const statusAdmin = localStorage.getItem("isAdmin") === "true";
+    setIsAdmin(statusAdmin);
   }, []);
 
   useEffect(() => {
-    checarAdminNoBanco();
+    checarAdminStorage();
 
-    window.addEventListener("admin-status-change", checarAdminNoBanco);
+    // Escuta o evento disparado no login (Administrativo.jsx) e mudanças de aba
+    window.addEventListener("admin-status-change", checarAdminStorage);
+    window.addEventListener("storage", checarAdminStorage);
+
     return () => {
-      window.removeEventListener("admin-status-change", checarAdminNoBanco);
+      window.removeEventListener("admin-status-change", checarAdminStorage);
+      window.removeEventListener("storage", checarAdminStorage);
     };
-  }, [checarAdminNoBanco]);
+  }, [checarAdminStorage]);
 
   const handleAdminClick = (e) => {
     if (isAdmin) {

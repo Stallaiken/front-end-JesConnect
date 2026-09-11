@@ -100,14 +100,22 @@ function Horarios() {
     buscarConfrontos();
   }, []);
 
+  // Renderiza a logo ou aplica a mesma tratativa 'X' da tela de Times
   const renderBandeira = (logoURL, nomeAlt) => {
-    if (!logoURL) return null;
-    const imgUrl = BANDEIRAS[logoURL] || logoURL;
+    const imgUrl = logoURL ? BANDEIRAS[logoURL] || logoURL : null;
+
+    if (!imgUrl) {
+      return <span className="time-logo-x">X</span>;
+    }
+
     return (
       <img
         src={imgUrl}
         alt={nomeAlt || "Bandeira"}
         className="bandeira-img"
+        onError={(e) => {
+          e.target.outerHTML = '<span class="time-logo-x">X</span>';
+        }}
       />
     );
   };
@@ -119,7 +127,7 @@ function Horarios() {
     });
   };
 
-  // Filtragem dos confrontos mantendo a regra corrigida
+  // Filtragem dos confrontos
   const confrontosFiltrados = confrontos.filter((jogo) => {
     if (jogo.finalizado === true) {
       return false;
@@ -310,4 +318,4 @@ function Horarios() {
   );
 }
 
-export default Horarios;
+export default Horarios;  

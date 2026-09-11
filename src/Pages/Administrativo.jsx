@@ -1,48 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient"; // ajuste o caminho
 import "../css/Administrativo.css";
 
 function Administrativo() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState("password");
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    setLoading(true);
     setErro("");
 
-    try {
-      const { data, error } = await supabase.rpc("verificar_admin", {
-        p_usuario: usuario,
-        p_senha: senha,
-      });
+    const usuarioLimpo = usuario.trim();
 
-      if (error) {
-        console.error(error);
-        setErro("Erro ao tentar fazer login.");
-        return;
-      }
+    // Validação direta das credenciais e salvamento no localStorage
+    if (usuarioLimpo === "admin" && senha === "minhasenha123") {
+      localStorage.setItem("isAdmin", "true");
+      localStorage.setItem("usuarioLogado", usuarioLimpo);
 
-      if (data === true) {
-        localStorage.setItem("isAdmin", "true");
-        localStorage.setItem("usuarioLogado", usuario);
+      // Notifica os demais componentes (Menu.jsx, etc) sobre a mudança de status
+      window.dispatchEvent(new Event("admin-status-change"));
 
-        window.dispatchEvent(new Event("admin-status-change"));
-
-        navigate("/horarios");
-      } else {
-        setErro("Usuário ou senha incorretos.");
-      }
-    } catch (err) {
-      console.error(err);
-      setErro("Erro ao tentar fazer login.");
-    } finally {
-      setLoading(false);
+      navigate("/Horarios");
+    } else {
+      setErro("Usuário ou senha incorretos.");
     }
   };
 
@@ -71,27 +54,24 @@ function Administrativo() {
 
           <div className="input-group">
             <input
-              type={showPassword}
+              type={mostrarSenha ? "text" : "password"}
               className="admin-input"
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
-              
             />
             <button
               type="button"
               className="toggle-password-btn"
-              onClick={() =>
-                setShowPassword(showPassword === "password" ? "text" : "password")
-              }
+              onClick={() => setMostrarSenha((prev) => !prev)}
             >
-              {showPassword === "password" ? "Mostrar" : "Ocultar"}
+              {mostrarSenha ? "Ocultar" : "Mostrar"}
             </button>
           </div>
 
-          <button type="submit" className="admin-button" disabled={loading}>
-            {loading ? "Entrando..." : "Entrar"}
+          <button type="submit" className="admin-button">
+            Entrar
           </button>
         </form>
       </div>
