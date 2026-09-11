@@ -60,6 +60,7 @@ function Horarios({
   useEffect(() => {
     async function carregarDados() {
       setLoading(true);
+      setErroSupabase("");
 
       const { data: mods, error: errMods } = await supabase
         .from("modalidade")
@@ -72,7 +73,8 @@ function Horarios({
 
       setModalidades(mods || []);
 
-      const { data: confs, error: errConfs } = await supabase.from("confronto")
+      const { data: confs, error: errConfs } = await supabase
+        .from("confronto")
         .select(`
           id,
           finalizado,
@@ -146,12 +148,19 @@ function Horarios({
   }[acaoSelecao];
 
   const confrontosFiltrados = confrontos.filter((jogo) => {
+    // 1. Não mostra partidas finalizadas
     if (jogo.finalizado === true) {
       return false;
     }
 
-    const idModalidadeTime1 = jogo.time1?.id_modalidade;
+    // 2. Não mostra partidas que ainda não possuem os dois times
+    if (!jogo.time1?.id || !jogo.time2?.id) {
+      return false;
+    }
 
+    const idModalidadeTime1 = jogo.time1.id_modalidade;
+
+    // 3. Filtro de modalidade
     if (modalidadeId) {
       const mesmaModalidade =
         String(idModalidadeTime1) === String(modalidadeId);
@@ -161,12 +170,15 @@ function Horarios({
       }
     }
 
+    // 4. Descobre a modalidade do time
     const modalidadeDoTime = modalidades.find(
-      (modalidade) => String(modalidade.id) === String(idModalidadeTime1),
+      (modalidade) =>
+        String(modalidade.id) === String(idModalidadeTime1),
     );
 
     const modGenero = (modalidadeDoTime?.genero || "").toUpperCase();
 
+    // 5. Filtro masculino/feminino
     if (modGenero && modGenero !== "NOT" && modGenero !== "N") {
       if (modGenero !== generoFiltro) {
         return false;
@@ -204,7 +216,11 @@ function Horarios({
           }}
         >
           <span
-            className={aoVivo ? "badge-status-live" : "badge-status-upcoming"}
+            className={
+              aoVivo
+                ? "badge-status-live"
+                : "badge-status-upcoming"
+            }
           >
             {aoVivo ? (
               <>
@@ -219,12 +235,14 @@ function Horarios({
             <div className="col-time">
               <div className="box-logo">
                 <BandeiraImg
-                  logoURL={jogo.time1?.logo_URL}
-                  nomeAlt={jogo.time1?.Nome}
+                  logoURL={jogo.time1.logo_URL}
+                  nomeAlt={jogo.time1.Nome}
                 />
               </div>
 
-              <span className="nome-turma">{jogo.time1?.Nome || "Time 1"}</span>
+              <span className="nome-turma">
+                {jogo.time1.Nome}
+              </span>
             </div>
 
             <div className="placar-box">VS</div>
@@ -232,12 +250,14 @@ function Horarios({
             <div className="col-time">
               <div className="box-logo">
                 <BandeiraImg
-                  logoURL={jogo.time2?.logo_URL}
-                  nomeAlt={jogo.time2?.Nome}
+                  logoURL={jogo.time2.logo_URL}
+                  nomeAlt={jogo.time2.Nome}
                 />
               </div>
 
-              <span className="nome-turma">{jogo.time2?.Nome || "Time 2"}</span>
+              <span className="nome-turma">
+                {jogo.time2.Nome}
+              </span>
             </div>
           </div>
 
@@ -259,13 +279,19 @@ function Horarios({
 
   return (
     <div className="horarios-container">
-      {textoSelecao && <div className="aviso-selecao">{textoSelecao}</div>}
+      {textoSelecao && (
+        <div className="aviso-selecao">
+          {textoSelecao}
+        </div>
+      )}
 
       <div className="filtros-wrapper">
         <div className="genero-toggle">
           <button
             type="button"
-            className={`btn-genero ${generoFiltro === "M" ? "active" : ""}`}
+            className={`btn-genero ${
+              generoFiltro === "M" ? "active" : ""
+            }`}
             onClick={() => setGeneroFiltro("M")}
           >
             MASC
@@ -273,7 +299,9 @@ function Horarios({
 
           <button
             type="button"
-            className={`btn-genero ${generoFiltro === "F" ? "active" : ""}`}
+            className={`btn-genero ${
+              generoFiltro === "F" ? "active" : ""
+            }`}
             onClick={() => setGeneroFiltro("F")}
           >
             FEM
@@ -283,7 +311,9 @@ function Horarios({
         <div className="select-modalidade-wrapper">
           <select
             value={modalidadeId}
-            onChange={(evento) => setModalidadeId(evento.target.value)}
+            onChange={(evento) =>
+              setModalidadeId(evento.target.value)
+            }
             className="select-modalidade"
           >
             <option value="">MODALIDADE ↓</option>
@@ -291,7 +321,8 @@ function Horarios({
             {modalidades.map((modalidade) => (
               <option key={modalidade.id} value={modalidade.id}>
                 {modalidade.nome?.toUpperCase()}
-                {modalidade.genero && modalidade.genero !== "Not"
+                {modalidade.genero &&
+                modalidade.genero !== "Not"
                   ? ` (${modalidade.genero})`
                   : ""}
               </option>
@@ -301,16 +332,23 @@ function Horarios({
       </div>
 
       {loading ? (
-        <p className="loading-text">Carregando horários...</p>
+        <p className="loading-text">
+          Carregando horários...
+        </p>
       ) : erroSupabase ? (
-        <p className="loading-text" style={{ color: "red" }}>
+        <p
+          className="loading-text"
+          style={{ color: "red" }}
+        >
           {erroSupabase}
         </p>
       ) : (
         <>
           <div className="lista-cards">
             {aoVivoFiltrados.length > 0 ? (
-              aoVivoFiltrados.map((jogo) => renderizarCard(jogo, true))
+              aoVivoFiltrados.map((jogo) =>
+                renderizarCard(jogo, true),
+              )
             ) : (
               <p className="loading-text">
                 Nenhuma partida ao vivo no momento.
@@ -320,12 +358,16 @@ function Horarios({
 
           <div className="divisor-em-breve">
             <div className="linha-laranja" />
-            <span className="badge-divisor">EM BREVE</span>
+            <span className="badge-divisor">
+              EM BREVE
+            </span>
           </div>
 
           <div className="lista-cards">
             {emBreveFiltrados.length > 0 ? (
-              emBreveFiltrados.map((jogo) => renderizarCard(jogo, false))
+              emBreveFiltrados.map((jogo) =>
+                renderizarCard(jogo, false),
+              )
             ) : (
               <p className="loading-text">
                 Nenhum confronto agendado em breve.
