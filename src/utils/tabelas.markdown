@@ -32,8 +32,8 @@ Modalidades
 |------|------|-------------|
 | `id` | `uuid` | Primary |
 | `created_at` | `timestamptz` |  |
-| `time1` | `uuid` |  |
-| `time2` | `uuid` |  |
+| `time1` | `uuid` |  Nullable |
+| `time2` | `uuid` |  Nullable |
 | `finalizado` | `bool` |  |
 | `horario` | `timestamptz` |  Nullable |
 | `ao_vivo` | `bool` |  |
@@ -42,6 +42,8 @@ Modalidades
 | `ordem` | `int4` |  Nullable |
 | `proximo_confronto` | `uuid` |  Nullable |
 | `lado_proximo` | `varchar` |  Nullable |
+| `origem_time1` | `uuid` |  Nullable |
+| `origem_time2` | `uuid` |  Nullable |
 
 ## Table `detalhes`
 
@@ -56,17 +58,6 @@ Modalidades
 | `ptn_time2` | `int4` |  |
 | `local` | `varchar` |  |
 | `vencedor` | `uuid` |  Nullable |
-
-## Table `admins`
-
-### Columns
-
-| Name | Type | Constraints |
-|------|------|-------------|
-| `id` | `uuid` | Primary |
-| `usuario` | `text` |  Unique |
-| `senha` | `text` |  |
-| `created_at` | `timestamptz` |  Nullable |
 
 ## Table `campeonato`
 
@@ -141,12 +132,6 @@ Modalidades
 | `Permitir deletar detalhes` | DELETE | anon, authenticated | PERMISSIVE | `true` | — |
 | `Qualquer um pode ver detalhes` | SELECT | public | PERMISSIVE | `true` | — |
 | `Permitir inserir detalhes` | INSERT | anon, authenticated | PERMISSIVE | — | `true` |
-
-### `admins`
-
-| Policy | Command | Roles | Action | USING | WITH CHECK |
-|--------|---------|-------|--------|-------|------------|
-| `Ninguém pode ver admins` | SELECT | public | PERMISSIVE | `false` | — |
 
 ### `campeonato`
 

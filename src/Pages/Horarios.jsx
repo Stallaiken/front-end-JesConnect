@@ -48,6 +48,7 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
     };
 
     window.addEventListener("scroll", handleScroll);
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -80,13 +81,13 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
             id_modalidade
           ),
 
-          time2:time2 (
-            id,
-            Nome,
-            logo_URL,
-            id_modalidade
-          )
-        `);
+            time2:time2 (
+              id,
+              Nome,
+              logo_URL,
+              id_modalidade
+            )
+          `);
 
       if (errConfs) {
         console.error("Erro confrontos:", errConfs);
@@ -100,6 +101,18 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
     carregarDados();
   }, []);
 
+  const renderBandeira = (logoURL, nomeAlt) => {
+    if (!logoURL) return null;
+    const imgUrl = BANDEIRAS[logoURL] || logoURL;
+    return (
+      <img
+        src={imgUrl}
+        alt={nomeAlt || "Bandeira"}
+        className="bandeira-img"
+      />
+    );
+  };
+
   const subirParaTopo = () => {
     window.scrollTo({
       top: 0,
@@ -107,49 +120,35 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
     });
   };
 
-  const handleSelecao = (e, jogo) => {
-    if (e && typeof e.stopPropagation === "function") {
-      e.stopPropagation();
-    }
-
-    if (typeof onSelecionarJogo === "function") {
-      onSelecionarJogo(jogo);
-    }
-  };
-
-  const jogoPodeSerSelecionado = (jogo) => {
-    if (!acaoSelecao) return false;
-    if (acaoSelecao === "comecar") return jogo.ao_vivo !== true;
-    if (acaoSelecao === "editar" || acaoSelecao === "finalizar") {
-      return jogo.ao_vivo === true;
-    }
-    return acaoSelecao === "deletar";
-  };
-
-  const textoSelecao = {
-    editar: "Selecione uma partida ao vivo para editar",
-    deletar: "Selecione a partida que deseja excluir",
-    comecar: "Selecione uma partida em breve para começar",
-    finalizar: "Selecione uma partida ao vivo para finalizar",
-  }[acaoSelecao];
-
+  // Filtragem dos confrontos mantendo a regra corrigida
   const confrontosFiltrados = confrontos.filter((jogo) => {
-    if (jogo.finalizado === true) return false;
+    if (jogo.finalizado === true) {
+      return false;
+    }
 
     const idModalidadeTime1 = jogo.time1?.id_modalidade;
 
+    // FILTRO DE MODALIDADE
     if (modalidadeId) {
       const mesmaModalidade =
         String(idModalidadeTime1) === String(modalidadeId);
-      if (!mesmaModalidade) return false;
+
+      if (!mesmaModalidade) {
+        return false;
+      }
     }
 
+    // ENCONTRAR A MODALIDADE DO TIME
     const modalidadeDoTime = modalidades.find(
-      (modalidade) => String(modalidade.id) === String(idModalidadeTime1)
+      (modalidade) =>
+        String(modalidade.id) === String(idModalidadeTime1)
     );
 
-    const modGenero = (modalidadeDoTime?.genero || "").toUpperCase();
+    const modGenero = (
+      modalidadeDoTime?.genero || ""
+    ).toUpperCase();
 
+    // FILTRO DE GÊNERO
     if (modGenero && modGenero !== "NOT" && modGenero !== "N") {
       if (modGenero !== generoFiltro) return false;
     }
@@ -157,205 +156,184 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
     return true;
   });
 
+  // Divisão entre Ao Vivo e Em Breve
   const aoVivoFiltrados = confrontosFiltrados.filter((j) => j.ao_vivo === true);
   const emBreveFiltrados = confrontosFiltrados.filter((j) => !j.ao_vivo);
 
   return (
     <div className="horarios-container">
-      {textoSelecao && <div className="aviso-selecao">{textoSelecao}</div>}
+      {/* FILTROS */}
       <div className="filtros-wrapper">
+
         <div className="genero-toggle">
+
           <button
             type="button"
-            className={`btn-genero ${generoFiltro === "M" ? "active" : ""}`}
+            className={`btn-genero ${
+              generoFiltro === "M" ? "active" : ""
+            }`}
             onClick={() => setGeneroFiltro("M")}
           >
             MASC
           </button>
+
           <button
             type="button"
-            className={`btn-genero ${generoFiltro === "F" ? "active" : ""}`}
+            className={`btn-genero ${
+              generoFiltro === "F" ? "active" : ""
+            }`}
             onClick={() => setGeneroFiltro("F")}
           >
             FEM
           </button>
+
         </div>
 
         <div className="select-modalidade-wrapper">
+
           <select
             value={modalidadeId}
             onChange={(e) => setModalidadeId(e.target.value)}
             className="select-modalidade"
           >
-            <option value="">MODALIDADE</option>
+            <option value="">MODALIDADE ↓</option>
             {modalidades.map((modalidade) => (
               <option key={modalidade.id} value={modalidade.id}>
-                {modalidade.nome?.toUpperCase()}
+                {modalidade.nome.toUpperCase()}
                 {modalidade.genero && modalidade.genero !== "Not"
                   ? ` (${modalidade.genero})`
                   : ""}
               </option>
             ))}
+
           </select>
-          <span className="seta-dropdown">▼</span>
         </div>
+
       </div>
 
       {loading ? (
-        <p className="loading-text">Carregando horários...</p>
+        <p className="loading-text">
+          Carregando horários...
+        </p>
       ) : erroSupabase ? (
-        <p className="loading-text" style={{ color: "red" }}>
+        <p
+          className="loading-text"
+          style={{ color: "red" }}
+        >
           {erroSupabase}
         </p>
       ) : (
         <>
+
           {/* CARDS AO VIVO */}
           <div className="lista-cards">
+
             {aoVivoFiltrados.length > 0 ? (
-              aoVivoFiltrados.map((jogo) => {
-                const selecionado = jogoSelecionado?.id === jogo.id;
-                const selecionavel = jogoPodeSerSelecionado(jogo);
-                return (
-                  <div key={jogo.id} className="card-item-wrapper">
-                    <div
-                      className={`card-partida live ${
-                        selecionado ? "card-selecionado" : ""
-                      }`}
-                      onClick={(e) => selecionavel && handleSelecao(e, jogo)}
-                      style={{ cursor: selecionavel ? "pointer" : "default" }}
-                    >
-                      <span className="badge-status-live">
-                        AO VIVO <span className="dot">•</span>
-                      </span>
+              aoVivoFiltrados.map((jogo) => (
+                <div key={jogo.id} className="card-partida live">
+                  <span className="badge-status-live">
+                    AO VIVO <span className="dot">•</span>
+                  </span>
 
-                      <div className="conteudo-partida">
-                        <div className="col-time">
-                          <div className="box-logo">
-                            <BandeiraImg
-                              logoURL={jogo.time1?.logo_URL}
-                              nomeAlt={jogo.time1?.Nome}
-                            />
-                          </div>
-                          <span className="nome-turma">
-                            {jogo.time1?.Nome || "Time 1"}
-                          </span>
-                        </div>
-
-                        <div className="placar-box">VS</div>
-
-                        <div className="col-time">
-                          <div className="box-logo">
-                            <BandeiraImg
-                              logoURL={jogo.time2?.logo_URL}
-                              nomeAlt={jogo.time2?.Nome}
-                            />
-                          </div>
-                          <span className="nome-turma">
-                            {jogo.time2?.Nome || "Time 2"}
-                          </span>
-                        </div>
+                  <div className="conteudo-partida">
+                    <div className="col-time">
+                      <div className="box-logo">
+                        {renderBandeira(
+                          jogo.time1?.logo_URL,
+                          jogo.time1?.Nome
+                        )}
                       </div>
-
-                      <div className="badge-quadra">QUADRA</div>
+                      <span className="nome-turma">
+                        {jogo.time1?.Nome || "Time 1"}
+                      </span>
                     </div>
 
-                    {selecionavel && (
-                      <button
-                        type="button"
-                        className="btn-selecionar-editar"
-                        onClick={(e) => handleSelecao(e, jogo)}
-                      >
-                        {selecionado ? "SELECIONADO" : "SELECIONAR"}
-                      </button>
-                    )}
+                    <div className="placar-box">VS</div>
+
+                    <div className="col-time">
+                      <div className="box-logo">
+                        {renderBandeira(
+                          jogo.time2?.logo_URL,
+                          jogo.time2?.Nome
+                        )}
+                      </div>
+                      <span className="nome-turma">
+                        {jogo.time2?.Nome || "Time 2"}
+                      </span>
+                    </div>
                   </div>
-                );
-              })
+
+                  <div className="badge-quadra">QUADRA</div>
+                </div>
+              ))
             ) : (
-              <p className="loading-text">
-                Nenhuma partida ao vivo no momento.
-              </p>
+              <p className="loading-text">Nenhuma partida ao vivo no momento.</p>
             )}
+
           </div>
 
           {/* DIVISOR EM BREVE */}
           <div className="divisor-em-breve">
+
             <div className="linha-laranja" />
-            <span className="badge-divisor">EM BREVE</span>
+
+            <span className="badge-divisor">
+              EM BREVE
+            </span>
+
           </div>
 
           {/* CARDS EM BREVE */}
           <div className="lista-cards">
+
             {emBreveFiltrados.length > 0 ? (
-              emBreveFiltrados.map((jogo) => {
-                const selecionado = jogoSelecionado?.id === jogo.id;
-                const selecionavel = jogoPodeSerSelecionado(jogo);
-                return (
-                  <div key={jogo.id} className="card-item-wrapper">
-                    <div
-                      className={`card-partida ${
-                        selecionado ? "card-selecionado" : ""
-                      }`}
-                      onClick={(e) => selecionavel && handleSelecao(e, jogo)}
-                      style={{ cursor: selecionavel ? "pointer" : "default" }}
-                    >
-                      <span className="badge-status-upcoming">
-                        EM BREVE •
-                      </span>
+              emBreveFiltrados.map((jogo) => (
+                <div key={jogo.id} className="card-partida">
+                  <span className="badge-status-upcoming">EM BREVE •</span>
 
-                      <div className="conteudo-partida">
-                        <div className="col-time">
-                          <div className="box-logo">
-                            <BandeiraImg
-                              logoURL={jogo.time1?.logo_URL}
-                              nomeAlt={jogo.time1?.Nome}
-                            />
-                          </div>
-                          <span className="nome-turma">
-                            {jogo.time1?.Nome || "Time 1"}
-                          </span>
-                        </div>
-
-                        <div className="placar-box">VS</div>
-
-                        <div className="col-time">
-                          <div className="box-logo">
-                            <BandeiraImg
-                              logoURL={jogo.time2?.logo_URL}
-                              nomeAlt={jogo.time2?.Nome}
-                            />
-                          </div>
-                          <span className="nome-turma">
-                            {jogo.time2?.Nome || "Time 2"}
-                          </span>
-                        </div>
+                  <div className="conteudo-partida">
+                    <div className="col-time">
+                      <div className="box-logo">
+                        {renderBandeira(
+                          jogo.time1?.logo_URL,
+                          jogo.time1?.Nome
+                        )}
                       </div>
-
-                      <div className="badge-quadra">QUADRA</div>
+                      <span className="nome-turma">
+                        {jogo.time1?.Nome || "Time 1"}
+                      </span>
                     </div>
 
-                    {selecionavel && (
-                      <button
-                        type="button"
-                        className="btn-selecionar-editar"
-                        onClick={(e) => handleSelecao(e, jogo)}
-                      >
-                        {selecionado ? "SELECIONADO" : "SELECIONAR"}
-                      </button>
-                    )}
+                    <div className="placar-box">VS</div>
+
+                    <div className="col-time">
+                      <div className="box-logo">
+                        {renderBandeira(
+                          jogo.time2?.logo_URL,
+                          jogo.time2?.Nome
+                        )}
+                      </div>
+                      <span className="nome-turma">
+                        {jogo.time2?.Nome || "Time 2"}
+                      </span>
+                    </div>
                   </div>
-                );
-              })
+
+                  <div className="badge-quadra">QUADRA</div>
+                </div>
+              ))
             ) : (
-              <p className="loading-text">
-                Nenhum confronto agendado em breve.
-              </p>
+              <p className="loading-text">Nenhum confronto agendado em breve.</p>
             )}
+
           </div>
+
         </>
       )}
 
+      {/* BOTÃO VOLTAR AO TOPO */}
       {mostrarSeta && (
+
         <button
           type="button"
           className="btn-scroll-top"
@@ -364,7 +342,9 @@ function Horarios({ acaoSelecao = null, jogoSelecionado = null, onSelecionarJogo
         >
           ↑
         </button>
+
       )}
+
     </div>
   );
 }

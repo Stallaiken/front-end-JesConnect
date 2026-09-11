@@ -9,6 +9,7 @@ const bandeirasModules = import.meta.glob(
 );
 
 const BANDEIRAS = {};
+
 for (const path in bandeirasModules) {
   const fileName = path.split("/").pop().split(".")[0];
   BANDEIRAS[fileName] = bandeirasModules[path].default;
@@ -17,10 +18,13 @@ for (const path in bandeirasModules) {
 // Utilitário para resolver o caminho/URL da bandeira
 const getBandeira = (logo) => {
   if (!logo) return null;
+
   if (logo.startsWith("http://") || logo.startsWith("https://")) {
     return logo;
   }
+
   const cleanName = logo.split("/").pop().split(".")[0];
+
   return BANDEIRAS[cleanName] || null;
 };
 
@@ -29,6 +33,10 @@ function Ranking() {
   const [modalidades, setModalidades] = useState([]);
   const [modalidadeSelecionada, setModalidadeSelecionada] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // ==========================================
+  // CARREGAR MODALIDADES
+  // ==========================================
 
   useEffect(() => {
     const carregarModalidades = async () => {
@@ -52,6 +60,10 @@ function Ranking() {
     carregarModalidades();
   }, []);
 
+  // ==========================================
+  // CALCULAR RANKING
+  // ==========================================
+
   useEffect(() => {
     if (!modalidadeSelecionada) return;
 
@@ -59,7 +71,10 @@ function Ranking() {
       setLoading(true);
 
       try {
-        // Times da modalidade
+        // ==========================================
+        // BUSCAR TIMES DA MODALIDADE
+        // ==========================================
+
         const { data: times, error: erroTimes } = await supabase
           .from("time")
           .select("id, Nome, logo_URL, id_modalidade")
@@ -67,107 +82,208 @@ function Ranking() {
 
         if (erroTimes) throw erroTimes;
 
-        // Confrontos finalizados
+        // ==========================================
+        // BUSCAR CONFRONTOS FINALIZADOS
+        // ==========================================
+
         const { data: jogos, error: erroJogos } = await supabase
           .from("confronto")
-          .select(
-            `
-              id,
-              time1,
-              time2,
-              finalizado,
-              detalhes ( pontuacao )
-            `,
-          )
+          .select(`
+            id,
+            time1,
+            time2,
+            finalizado,
+            detalhes (
+              ptn_time1,
+              ptn_time2
+            )
+          `)
           .eq("finalizado", true);
 
         if (erroJogos) throw erroJogos;
+
+        // ==========================================
+        // CRIAR TABELA DO RANKING
+        // ==========================================
 
         const tabela = (times || []).map((time) => ({
           id: time.id,
           nome: time.Nome,
           logo: time.logo_URL,
+
           pontos: 0,
+
           jogos: 0,
+
           vitorias: 0,
           empates: 0,
           derrotas: 0,
+
           golsPro: 0,
           golsContra: 0,
+
           saldo: 0,
         }));
 
-        (jogos || []).forEach((jogo) => {
-          const t1 = tabela.find((time) => time.id === jogo.time1);
-          const t2 = tabela.find((time) => time.id === jogo.time2);
+        // ==========================================
+        // CALCULAR CADA PARTIDA
+        // ==========================================
 
+        (jogos || []).forEach((jogo) => {
+          const t1 = tabela.find(
+            (time) => time.id === jogo.time1
+          );
+
+          const t2 = tabela.find(
+            (time) => time.id === jogo.time2
+          );
+
+          // Se algum time não pertence à modalidade
+          // selecionada, ignora a partida.
           if (!t1 || !t2) return;
 
-          const pontuacao = jogo.detalhes?.[0]?.pontuacao;
-          const gols1 = Number(pontuacao?.[0] || 0);
-          const gols2 = Number(pontuacao?.[1] || 0);
+          // ==========================================
+          // PEGAR PLACAR DOS DETALHES
+          // ==========================================
+
+          const detalhes = jogo.detalhes?.[0];
+
+          const gols1 = Number(
+            detalhes?.ptn_time1 || 0
+          );
+
+          const gols2 = Number(
+            detalhes?.ptn_time2 || 0
+          );
+
+          // ==========================================
+          // JOGOS
+          // ==========================================
 
           t1.jogos += 1;
           t2.jogos += 1;
 
+          // ==========================================
+          // GOLS / PONTOS MARCADOS
+          // ==========================================
+
           t1.golsPro += gols1;
           t1.golsContra += gols2;
+
           t2.golsPro += gols2;
           t2.golsContra += gols1;
+
+          // ==========================================
+          // VITÓRIA
+          // ==========================================
 
           if (gols1 > gols2) {
             t1.pontos += 3;
             t1.vitorias += 1;
+
             t2.derrotas += 1;
-          } else if (gols2 > gols1) {
+          }
+
+          // ==========================================
+          // VITÓRIA DO TIME 2
+          // ==========================================
+
+          else if (gols2 > gols1) {
             t2.pontos += 3;
             t2.vitorias += 1;
+
             t1.derrotas += 1;
-          } else {
+          }
+
+          // ==========================================
+          // EMPATE
+          // ==========================================
+
+          else {
             t1.pontos += 1;
             t2.pontos += 1;
+
             t1.empates += 1;
             t2.empates += 1;
           }
         });
 
+        // ==========================================
+        // CALCULAR SALDO
+        // ==========================================
+
         tabela.forEach((time) => {
-          time.saldo = time.golsPro - time.golsContra;
+          time.saldo =
+            time.golsPro - time.golsContra;
         });
+
+        // ==========================================
+        // ORDENAR RANKING
+        // ==========================================
 
         tabela.sort(
           (a, b) =>
-            b.pontos - a.pontos || b.saldo - a.saldo || b.golsPro - a.golsPro,
+            b.pontos - a.pontos ||
+            b.saldo - a.saldo ||
+            b.golsPro - a.golsPro
         );
 
         setRanking(tabela);
+
       } catch (err) {
         console.error("Erro no ranking:", err);
+
         setRanking([]);
+
       } finally {
         setLoading(false);
       }
     };
 
     calcularRanking();
+
   }, [modalidadeSelecionada]);
+
+  // ==========================================
+  // POSIÇÕES DO PÓDIO
+  // ==========================================
 
   const primeiro = ranking[0];
   const segundo = ranking[1];
   const terceiro = ranking[2];
+
   const resto = ranking.slice(3);
+
+  // ==========================================
+  // TELA
+  // ==========================================
 
   return (
     <div className="horarios-page">
+
       <div className="horarios-titulo-container">
-        <h1 className="horarios-titulo">Ranking Oficial</h1>
-        <p className="horarios-subtitulo">Classificação por Modalidade</p>
+
+        <h1 className="horarios-titulo">
+          Ranking Oficial
+        </h1>
+
+        <p className="horarios-subtitulo">
+          Classificação por Modalidade
+        </p>
+
       </div>
 
+      {/* ==========================================
+          SELECIONAR MODALIDADE
+      ========================================== */}
+
       <div style={{ marginBottom: "24px" }}>
+
         <select
           value={modalidadeSelecionada}
-          onChange={(e) => setModalidadeSelecionada(e.target.value)}
+          onChange={(e) =>
+            setModalidadeSelecionada(e.target.value)
+          }
           style={{
             padding: "10px 16px",
             borderRadius: "12px",
@@ -177,28 +293,60 @@ function Ranking() {
             border: "none",
           }}
         >
+
           {modalidades.map((m) => (
-            <option key={m.id} value={m.id}>
+
+            <option
+              key={m.id}
+              value={m.id}
+            >
               {m.nome}
-              {m.genero && m.genero !== "Not" ? ` (${m.genero})` : ""}
+
+              {m.genero && m.genero !== "Not"
+                ? ` (${m.genero})`
+                : ""}
             </option>
+
           ))}
+
         </select>
+
       </div>
 
-      {loading && (
-        <p className="horarios-mensagem-vazia">Calculando ranking...</p>
-      )}
+      {/* ==========================================
+          LOADING
+      ========================================== */}
 
-      {!loading && ranking.length === 0 && (
+      {loading && (
         <p className="horarios-mensagem-vazia">
-          Nenhuma partida finalizada para esta modalidade.
+          Calculando ranking...
         </p>
       )}
 
+      {/* ==========================================
+          NENHUMA PARTIDA
+      ========================================== */}
+
+      {!loading && ranking.length === 0 && (
+
+        <p className="horarios-mensagem-vazia">
+          Nenhuma partida finalizada para esta modalidade.
+        </p>
+
+      )}
+
+      {/* ==========================================
+          RANKING
+      ========================================== */}
+
       {!loading && ranking.length > 0 && (
+
         <>
-          {/* PÓDIO */}
+
+          {/* ==========================================
+              PÓDIO
+          ========================================== */}
+
           <div
             style={{
               display: "flex",
@@ -210,8 +358,13 @@ function Ranking() {
               maxWidth: "500px",
             }}
           >
-            {/* 2º LUGAR */}
+
+            {/* ==========================================
+                2º LUGAR
+            ========================================== */}
+
             {segundo && (
+
               <div
                 className="card-confronto"
                 style={{
@@ -222,7 +375,13 @@ function Ranking() {
                   justifyContent: "space-between",
                 }}
               >
-                <span style={{ color: "#1b52e0", fontWeight: "900" }}>
+
+                <span
+                  style={{
+                    color: "#1b52e0",
+                    fontWeight: "900",
+                  }}
+                >
                   2º LUGAR
                 </span>
 
@@ -234,7 +393,9 @@ function Ranking() {
                     justifyContent: "center",
                   }}
                 >
+
                   {getBandeira(segundo.logo) && (
+
                     <img
                       src={getBandeira(segundo.logo)}
                       alt={segundo.nome}
@@ -246,19 +407,34 @@ function Ranking() {
                         borderRadius: "4px",
                       }}
                     />
+
                   )}
+
                 </div>
 
-                <span className="nome-time">{segundo.nome}</span>
+                <span className="nome-time">
+                  {segundo.nome}
+                </span>
 
-                <span style={{ fontSize: "0.75rem", fontWeight: "bold" }}>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                  }}
+                >
                   {segundo.pontos} PTS
                 </span>
+
               </div>
+
             )}
 
-            {/* 1º LUGAR */}
+            {/* ==========================================
+                1º LUGAR
+            ========================================== */}
+
             {primeiro && (
+
               <div
                 className="card-confronto"
                 style={{
@@ -270,7 +446,13 @@ function Ranking() {
                   border: "2px solid #1b52e0",
                 }}
               >
-                <span style={{ fontWeight: "900", fontSize: "1rem" }}>
+
+                <span
+                  style={{
+                    fontWeight: "900",
+                    fontSize: "1rem",
+                  }}
+                >
                   1º LUGAR
                 </span>
 
@@ -282,7 +464,9 @@ function Ranking() {
                     justifyContent: "center",
                   }}
                 >
+
                   {getBandeira(primeiro.logo) && (
+
                     <img
                       src={getBandeira(primeiro.logo)}
                       alt={primeiro.nome}
@@ -294,21 +478,39 @@ function Ranking() {
                         borderRadius: "4px",
                       }}
                     />
+
                   )}
+
                 </div>
 
-                <span className="nome-time" style={{ fontSize: "0.85rem" }}>
+                <span
+                  className="nome-time"
+                  style={{
+                    fontSize: "0.85rem",
+                  }}
+                >
                   {primeiro.nome}
                 </span>
 
-                <span style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: "bold",
+                  }}
+                >
                   {primeiro.pontos} PTS
                 </span>
+
               </div>
+
             )}
 
-            {/* 3º LUGAR */}
+            {/* ==========================================
+                3º LUGAR
+            ========================================== */}
+
             {terceiro && (
+
               <div
                 className="card-confronto"
                 style={{
@@ -319,7 +521,13 @@ function Ranking() {
                   justifyContent: "space-between",
                 }}
               >
-                <span style={{ fontWeight: "900", fontSize: "0.9rem" }}>
+
+                <span
+                  style={{
+                    fontWeight: "900",
+                    fontSize: "0.9rem",
+                  }}
+                >
                   3º LUGAR
                 </span>
 
@@ -331,7 +539,9 @@ function Ranking() {
                     justifyContent: "center",
                   }}
                 >
+
                   {getBandeira(terceiro.logo) && (
+
                     <img
                       src={getBandeira(terceiro.logo)}
                       alt={terceiro.nome}
@@ -343,25 +553,46 @@ function Ranking() {
                         borderRadius: "4px",
                       }}
                     />
+
                   )}
+
                 </div>
 
-                <span className="nome-time">{terceiro.nome}</span>
+                <span className="nome-time">
+                  {terceiro.nome}
+                </span>
 
-                <span style={{ fontSize: "0.75rem", fontWeight: "bold" }}>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                  }}
+                >
                   {terceiro.pontos} PTS
                 </span>
+
               </div>
+
             )}
+
           </div>
 
-          {/* DEMAIS TIMES */}
+          {/* ==========================================
+              DEMAIS TIMES
+          ========================================== */}
+
           {resto.length > 0 && (
+
             <div
               className="lista-confrontos"
-              style={{ maxWidth: "500px", width: "100%" }}
+              style={{
+                maxWidth: "500px",
+                width: "100%",
+              }}
             >
+
               {resto.map((time, idx) => (
+
                 <div
                   key={time.id}
                   className="card-confronto"
@@ -374,6 +605,7 @@ function Ranking() {
                     marginBottom: "8px",
                   }}
                 >
+
                   <div
                     style={{
                       display: "flex",
@@ -381,7 +613,13 @@ function Ranking() {
                       gap: "12px",
                     }}
                   >
-                    <span style={{ fontWeight: "800", color: "#1b52e0" }}>
+
+                    <span
+                      style={{
+                        fontWeight: "800",
+                        color: "#1b52e0",
+                      }}
+                    >
                       {idx + 4}º
                     </span>
 
@@ -394,7 +632,9 @@ function Ranking() {
                         justifyContent: "center",
                       }}
                     >
+
                       {getBandeira(time.logo) && (
+
                         <img
                           src={getBandeira(time.logo)}
                           alt={time.nome}
@@ -405,12 +645,20 @@ function Ranking() {
                             borderRadius: "3px",
                           }}
                         />
+
                       )}
+
                     </div>
 
-                    <span className="nome-time" style={{ textAlign: "left" }}>
+                    <span
+                      className="nome-time"
+                      style={{
+                        textAlign: "left",
+                      }}
+                    >
                       {time.nome}
                     </span>
+
                   </div>
 
                   <div
@@ -420,19 +668,29 @@ function Ranking() {
                       fontSize: "0.85rem",
                     }}
                   >
+
                     <span>
                       <b>{time.pontos}</b> PTS
                     </span>
+
                     <span>
                       <b>{time.saldo}</b> SG
                     </span>
+
                   </div>
+
                 </div>
+
               ))}
+
             </div>
+
           )}
+
         </>
+
       )}
+
     </div>
   );
 }
