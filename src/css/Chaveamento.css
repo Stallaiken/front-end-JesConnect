@@ -1,70 +1,369 @@
-.chaveamento-container{
+.chaveamento-container {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
 
-padding:30px;
+  padding: 30px;
+
+  background: #f5f5f5;
+  color: #111;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.chaveamento-container h1 {
+  margin: 0 0 25px;
+
+  font-size: 32px;
+  font-weight: 500;
+}
+
+/* FILTROS */
+
+.chaveamento-filtros {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 15px;
+}
+
+.chaveamento-filtros select {
+  min-width: 220px;
+
+  padding: 12px 15px;
+
+  border: 1px solid #c8c8c8;
+  border-radius: 8px;
+
+  background: white;
+
+  font-size: 16px;
+}
+
+.chaveamento-filtros button {
+  padding: 12px 18px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f26522;
+  color: white;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.chaveamento-filtros button:hover {
+  opacity: 0.9;
+}
+
+.chaveamento-filtros button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chaveamento-mensagem {
+  margin: 10px 0;
+
+  color: #555;
+  font-size: 15px;
+}
+
+.quantidade-times {
+  margin-bottom: 20px;
+
+  color: #666;
+  font-size: 14px;
+}
+
+/* BRACKET */
+
+.bracket {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 55px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  padding: 30px 10px 50px;
+
+  box-sizing: border-box;
+}
+
+/* CADA FASE */
+
+.fase {
+  min-width: 260px;
+  width: 260px;
+
+  flex-shrink: 0;
+}
+
+.fase h2 {
+  margin: 0 0 25px;
+
+  text-align: center;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  color: #222;
+}
+
+/*
+  Os jogos são distribuídos verticalmente.
+*/
+
+.jogos-fase {
+  display: flex;
+  flex-direction: column;
+
+  gap: 25px;
+}
+
+/* JOGO */
+
+.match {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 10px;
+
+  background: transparent;
+
+  position: relative;
+}
+
+/* TEXTO FIM DO JOGO */
+
+.match-status {
+  margin-bottom: 8px;
+
+  color: #777;
+
+  font-size: 13px;
+}
+
+/* TIME */
+
+.time {
+  width: 100%;
+  min-height: 48px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 7px 10px;
+
+  border: 1px solid #bfc6d2;
+  border-radius: 8px;
+
+  background: white;
+
+  cursor: grab;
+
+  transition: 0.15s;
+}
+
+.time:active {
+  cursor: grabbing;
+}
+
+.time:hover {
+  border-color: #68758a;
+  transform: translateX(2px);
+}
+
+.logo-time {
+  width: 30px;
+  height: 30px;
+
+  object-fit: contain;
+
+  flex-shrink: 0;
+}
+
+.time span {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.time-vazio {
+  color: #999;
+
+  background: #fafafa;
+
+  cursor: default;
+
+  border-style: dashed;
+}
+
+.time-vazio:hover {
+  transform: none;
+}
+
+/* LOGO VAZIA */
+
+.logo-vazia {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e7e7e7;
+  color: #888;
+
+  font-size: 16px;
+}
+
+/* VS */
+
+.vs {
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #777;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* BARRA DE ROLAGEM */
+
+.bracket::-webkit-scrollbar {
+  height: 9px;
+}
+
+.bracket::-webkit-scrollbar-track {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.bracket::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.bracket::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* DESKTOP */
+
+@media (min-width: 900px) {
+
+  /*
+    Cria um espaçamento maior entre os jogos
+    conforme a fase avança.
+  */
+
+  .fase:nth-child(2) {
+    padding-top: 80px;
+  }
+
+  .fase:nth-child(3) {
+    padding-top: 160px;
+  }
+
+  .fase:nth-child(4) {
+    padding-top: 240px;
+  }
+
+  .fase:nth-child(5) {
+    padding-top: 320px;
+  }
+
+  .fase:nth-child(6) {
+    padding-top: 400px;
+  }
 
 }
 
+/* CELULAR */
 
-.bracket{
+@media (max-width: 700px) {
 
-display:flex;
+  .chaveamento-container {
+    padding: 20px 10px;
+  }
 
-gap:80px;
+  .chaveamento-container h1 {
+    font-size: 27px;
+  }
 
-overflow-x:auto;
+  .chaveamento-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-padding:50px;
+  .chaveamento-filtros select {
+    width: 100%;
+  }
 
+  .chaveamento-filtros button {
+    width: 100%;
+  }
 
-}
+  .bracket {
+    gap: 35px;
 
+    padding-left: 5px;
+    padding-right: 5px;
+  }
 
-.fase{
+  .fase {
+    min-width: 240px;
+    width: 240px;
+  }
 
-min-width:250px;
+  .fase:nth-child(n) {
+    padding-top: 0;
+  }
 
-
-}
-
-
-.match{
-
-
-background:#151515;
-
-color:white;
-
-border-radius:12px;
-
-padding:15px;
-
-margin:30px 0;
-
-display:flex;
-
-flex-direction:column;
-
-gap:10px;
-
-
-}
-
-
-.match div{
-
-background:#222;
-
-padding:10px;
-
-border-radius:8px;
+  .jogos-fase {
+    gap: 20px;
+  }
 
 }
 
+/* CELULAR PEQUENO */
 
-.match span{
+@media (max-width: 400px) {
 
-text-align:center;
+  .fase {
+    min-width: 220px;
+    width: 220px;
+  }
+
+  .time {
+    min-height: 45px;
+  }
+
+  .time span {
+    font-size: 14px;
+  }
 
 }
-
-

@@ -57,9 +57,12 @@ function Menu() {
           <Link to="/Ranking">Ranking</Link>
           <Link to="/Historico">Histórico</Link>
           <Link to="/Times">Times</Link>
+          <Link to="/Chaveamento">Chaveamento</Link>
           <Link to="/Administrativo" onClick={handleAdminClick}>
             Admin
           </Link>
+
+          
         </nav>
 
         <div className="logo-sesi-menu">

@@ -1,82 +1,95 @@
 import Match from "./Match";
 
+function Bracket({
+  jogos,
+  onMoverTime,
+  onAlterarAoVivo,
+  onRegistrarVencedor,
+}) {
+  const fases = [];
 
-function Bracket({jogos}){
+  jogos.forEach((jogo) => {
+    if (!fases.includes(jogo.fase)) {
+      fases.push(jogo.fase);
+    }
+  });
 
+  const ordemFases = [
+    "32-avos de final",
+    "16-avos de final",
+    "Oitavas de final",
+    "Quartas de final",
+    "Semifinal",
+    "Final",
+  ];
 
-return (
+  fases.sort((a, b) => {
+    const posA =
+      ordemFases.indexOf(a);
 
-<div className="bracket">
+    const posB =
+      ordemFases.indexOf(b);
 
+    /*
+      Caso exista uma fase diferente
+      da lista, ela fica no final.
+    */
+    return (
+      (posA === -1
+        ? 999
+        : posA) -
+      (posB === -1
+        ? 999
+        : posB)
+    );
+  });
 
-<div className="fase">
+  return (
+    <div className="bracket">
+      {fases.map((fase) => {
+        const jogosDaFase =
+          jogos
+            .filter(
+              (jogo) =>
+                jogo.fase === fase
+            )
+            .sort(
+              (a, b) =>
+                (a.ordem || 0) -
+                (b.ordem || 0)
+            );
 
-<h2>
-QUARTAS
-</h2>
+        return (
+          <div
+            className="fase"
+            key={fase}
+          >
+            <h2>{fase}</h2>
 
-
-{
-jogos.map((jogo,index)=>(
-
-<Match
-
-key={index}
-
-jogo={jogo}
-
-/>
-
-))
-
+            <div className="jogos-fase">
+              {jogosDaFase.map(
+                (jogo) => (
+                  <Match
+                    key={jogo.id}
+                    jogo={jogo}
+                    onMoverTime={
+                      onMoverTime
+                    }
+                    onAlterarAoVivo={
+                      onAlterarAoVivo
+                    }
+                    onRegistrarVencedor={
+                      onRegistrarVencedor
+                    }
+                  />
+                )
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
-
-
-</div>
-
-
-<div className="fase">
-
-<h2>
-SEMIFINAL
-</h2>
-
-
-<div className="match-vazio">
-
-Aguardando
-
-</div>
-
-
-</div>
-
-
-
-<div className="fase">
-
-<h2>
-FINAL
-</h2>
-
-
-<div className="match-vazio">
-
-Aguardando
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-)
-
-
-}
-
 
 export default Bracket;
