@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 import "../../css/admin/EditarJogo.css";
 
 const bandeirasModules = import.meta.glob(
   "../../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  { eager: true }
+  { eager: true },
 );
 
 const BANDEIRAS = {};
@@ -76,12 +76,14 @@ function EditarJogo() {
       setLoading(true);
       const { data, error } = await supabase
         .from("confronto")
-        .select(`
+        .select(
+          `
           id,
           time1:time!confronto_time1_fkey ( id, id_modalidade ),
           time2:time!confronto_time2_fkey ( id ),
           detalhes:detalhes ( id, local )
-        `)
+        `,
+        )
         .eq("id", jogoId)
         .single();
 
@@ -149,12 +151,17 @@ function EditarJogo() {
 
     if (erroBuscaDetalhe) {
       setLoading(false);
-      setErro(`Times atualizados, mas houve erro ao consultar o local: ${erroBuscaDetalhe.message}`);
+      setErro(
+        `Times atualizados, mas houve erro ao consultar o local: ${erroBuscaDetalhe.message}`,
+      );
       return;
     }
 
     const operacaoDetalhe = detalheExistente
-      ? supabase.from("detalhes").update({ local }).eq("id", detalheExistente.id)
+      ? supabase
+          .from("detalhes")
+          .update({ local })
+          .eq("id", detalheExistente.id)
       : supabase.from("detalhes").insert({
           confronto_id: jogoId,
           ptn_time1: 0,
@@ -166,7 +173,9 @@ function EditarJogo() {
     setLoading(false);
 
     if (erroDetalhe) {
-      setErro(`Times atualizados, mas não foi possível salvar o local: ${erroDetalhe.message}`);
+      setErro(
+        `Times atualizados, mas não foi possível salvar o local: ${erroDetalhe.message}`,
+      );
       return;
     }
 

@@ -5,11 +5,15 @@ import "../css/Menu.css";
 import Sesi_Logo from "../assets/Sesi_Logo.png";
 
 function Menu({ acaoSelecao, onIniciarSelecao }) {
-  const [isAdmin, setIsAdmin] = useState(false);
+
+
+
+  const [isAdmin, setIsAdmin] = useState(false); //Verifica se é administrador tirar quando for enviar para o professor
+
   const [showAdminBar, setShowAdminBar] = useState(false);
   const navigate = useNavigate();
 
-  // Função para verificar o status diretamente no localStorage
+
   const checarAdminStorage = useCallback(() => {
     const statusAdmin = localStorage.getItem("isAdmin") === "true";
     setIsAdmin(statusAdmin);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 import "../../css/admin/ComecarJogo.css";
 
 function ComecarJogo() {
@@ -64,7 +64,11 @@ function ComecarJogo() {
         {erro && <p className="comecar-jogo-erro">{erro}</p>}
 
         <div className="comecar-jogo-acoes">
-          <button type="button" className="secundario" onClick={() => navigate("/horarios")}>
+          <button
+            type="button"
+            className="secundario"
+            onClick={() => navigate("/horarios")}
+          >
             CANCELAR
           </button>
           <button type="button" onClick={handleComecar} disabled={loading}>

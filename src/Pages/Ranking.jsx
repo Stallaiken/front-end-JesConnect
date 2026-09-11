@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../utils/supabaseClient";
 import "../css/Ranking.css";
 
 // Importação dinâmica de imagens de bandeiras

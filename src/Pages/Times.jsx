@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../utils/supabaseClient";
 import "../css/Times.css";
 
 // Mapeamento dinâmico das bandeiras/logos locais

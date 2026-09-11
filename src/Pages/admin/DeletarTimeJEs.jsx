@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 import "../../css/admin/DeletarTime.css";
 
 function DeletarTime() {
@@ -21,7 +21,10 @@ function DeletarTime() {
 
     if (error) {
       console.error("Erro ao carregar times:", error);
-      setMensagem({ tipo: "erro", texto: "Erro ao carregar a lista de times." });
+      setMensagem({
+        tipo: "erro",
+        texto: "Erro ao carregar a lista de times.",
+      });
     } else {
       setTimes(data || []);
     }
@@ -46,14 +49,18 @@ function DeletarTime() {
 
       if (error) throw error;
 
-      setMensagem({ tipo: "sucesso", texto: `Time "${timeParaDeletar.Nome}" removido com sucesso!` });
+      setMensagem({
+        tipo: "sucesso",
+        texto: `Time "${timeParaDeletar.Nome}" removido com sucesso!`,
+      });
       setTimes(times.filter((t) => t.id !== timeParaDeletar.id));
       setTimeParaDeletar(null);
     } catch (err) {
       console.error("Erro ao deletar time:", err);
       setMensagem({
         tipo: "erro",
-        texto: "Não foi possível deletar o time. Verifique se ele possui jogos vinculados.",
+        texto:
+          "Não foi possível deletar o time. Verifique se ele possui jogos vinculados.",
       });
     } finally {
       setLoading(false);
@@ -61,14 +68,21 @@ function DeletarTime() {
   };
 
   const timesFiltrados = times.filter((t) =>
-    t.Nome?.toLowerCase().includes(busca.toLowerCase())
+    t.Nome?.toLowerCase().includes(busca.toLowerCase()),
   );
 
   return (
     <div className="add-time-screen">
       <header className="sesi-app-header">
         <button type="button" className="menu-btn" onClick={() => navigate(-1)}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -82,9 +96,12 @@ function DeletarTime() {
 
       <main className="add-time-container">
         <div className="add-time-form">
-          
           {mensagem.texto && (
-            <p className={mensagem.tipo === "erro" ? "error-text-msg" : "success-text-msg"}>
+            <p
+              className={
+                mensagem.tipo === "erro" ? "error-text-msg" : "success-text-msg"
+              }
+            >
               {mensagem.texto}
             </p>
           )}
@@ -100,8 +117,10 @@ function DeletarTime() {
           </div>
 
           <div className="black-card-input multi-card">
-            <span className="field-caption">TIMES CADASTRADOS ({timesFiltrados.length})</span>
-            
+            <span className="field-caption">
+              TIMES CADASTRADOS ({timesFiltrados.length})
+            </span>
+
             {carregandoLista ? (
               <p className="texto-informativo">Carregando times...</p>
             ) : timesFiltrados.length === 0 ? (
@@ -114,7 +133,10 @@ function DeletarTime() {
                       <strong className="deletar-time-nome">{t.Nome}</strong>
                       {t.modalidade && (
                         <small className="deletar-time-modalidade">
-                          Modalidade: {t.modalidade.nome} {t.modalidade.genero ? `(${t.modalidade.genero})` : ""}
+                          Modalidade: {t.modalidade.nome}{" "}
+                          {t.modalidade.genero
+                            ? `(${t.modalidade.genero})`
+                            : ""}
                         </small>
                       )}
                     </div>
@@ -131,7 +153,6 @@ function DeletarTime() {
               </div>
             )}
           </div>
-
         </div>
       </main>
 
@@ -140,7 +161,9 @@ function DeletarTime() {
           <div className="modal-box">
             <h3 className="modal-titulo">Confirmar Exclusão</h3>
             <p className="modal-texto">
-              Tem certeza que deseja apagar o time <strong>"{timeParaDeletar.Nome}"</strong>? Esta ação não pode ser desfeita.
+              Tem certeza que deseja apagar o time{" "}
+              <strong>"{timeParaDeletar.Nome}"</strong>? Esta ação não pode ser
+              desfeita.
             </p>
 
             <div className="modal-botoes">
@@ -152,7 +175,7 @@ function DeletarTime() {
               >
                 Cancelar
               </button>
-              
+
               <button
                 type="button"
                 className="btn-modal-confirmar"

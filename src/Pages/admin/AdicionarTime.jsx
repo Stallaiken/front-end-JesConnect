@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 import "../../css/admin/AdicionarTime.css";
 
 // Carregamento dinâmico das bandeiras da pasta assets
 const bandeirasModules = import.meta.glob(
   "../../assets/bandeiras/*.{png,jpg,jpeg,svg,webp}",
-  { eager: true }
+  { eager: true },
 );
 
 const LISTA_BANDEIRAS = Object.keys(bandeirasModules).map((path) => {
@@ -48,7 +48,7 @@ function AdicionarTime() {
 
   const toggleModalidade = (id) => {
     setModalidadesSelecionadas((prev) =>
-      prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id],
     );
   };
 
@@ -101,7 +101,14 @@ function AdicionarTime() {
       {/* CABEÇALHO SESI */}
       <header className="sesi-app-header">
         <button type="button" className="menu-btn" onClick={() => navigate(-1)}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -116,7 +123,6 @@ function AdicionarTime() {
       {/* CONTEÚDO PRINCIPAL */}
       <main className="add-time-container">
         <form onSubmit={handleSalvarTime} className="add-time-form">
-          
           {/* NOME DO TIME */}
           <div className="black-card-input">
             <span className="field-caption">NOME DO TIME</span>
@@ -142,7 +148,8 @@ function AdicionarTime() {
                     className={`chip-modalidade ${selected ? "active" : ""}`}
                     onClick={() => toggleModalidade(m.id)}
                   >
-                    {m.nome} {m.genero && m.genero !== "Not" ? `(${m.genero})` : ""}
+                    {m.nome}{" "}
+                    {m.genero && m.genero !== "Not" ? `(${m.genero})` : ""}
                   </button>
                 );
               })}
@@ -151,7 +158,9 @@ function AdicionarTime() {
 
           {/* URL EXTERNA OU CHAVE DA BANDEIRA */}
           <div className="black-card-input">
-            <span className="field-caption">URL DA BANDEIRA / LOGO (OPCIONAL)</span>
+            <span className="field-caption">
+              URL DA BANDEIRA / LOGO (OPCIONAL)
+            </span>
             <input
               type="text"
               value={logoUrl}
@@ -163,8 +172,10 @@ function AdicionarTime() {
           {/* SELEÇÃO DE BANDEIRAS LOCAIS */}
           <div className="bandeira-section">
             <div className="bandeira-header">
-              <span className="bandeira-title">OU SELECIONE UMA BANDEIRA LOCAL</span>
-              
+              <span className="bandeira-title">
+                OU SELECIONE UMA BANDEIRA LOCAL
+              </span>
+
               <button
                 type="button"
                 className={`btn-sem-bandeira ${!logoUrl ? "active" : ""}`}
@@ -213,11 +224,14 @@ function AdicionarTime() {
 
           {/* BOTÃO SALVAR */}
           <div className="submit-wrapper">
-            <button type="submit" className="btn-salvar-figma" disabled={loading}>
+            <button
+              type="submit"
+              className="btn-salvar-figma"
+              disabled={loading}
+            >
               {loading ? "Salvando..." : "Salvar Time"}
             </button>
           </div>
-
         </form>
       </main>
     </div>

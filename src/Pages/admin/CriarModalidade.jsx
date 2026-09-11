@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 import "../../css/admin/CriarModalidade.css";
 
 function CriarModalidade() {
@@ -65,14 +65,12 @@ function CriarModalidade() {
       }
 
       // 2. Insere a nova modalidade no banco
-      const { error: errorInsert } = await supabase
-        .from("modalidade")
-        .insert([
-          {
-            nome: nomeFormatado,
-            genero: genero || "Not",
-          },
-        ]);
+      const { error: errorInsert } = await supabase.from("modalidade").insert([
+        {
+          nome: nomeFormatado,
+          genero: genero || "Not",
+        },
+      ]);
 
       if (errorInsert) {
         throw errorInsert;
@@ -103,16 +101,13 @@ function CriarModalidade() {
   // Deletar modalidade
   const handleDeletarModalidade = async (id, nomeModalidade) => {
     const confirmacao = window.confirm(
-      `Tem certeza que deseja deletar a modalidade "${nomeModalidade}"?`
+      `Tem certeza que deseja deletar a modalidade "${nomeModalidade}"?`,
     );
 
     if (!confirmacao) return;
 
     try {
-      const { error } = await supabase
-        .from("modalidade")
-        .delete()
-        .eq("id", id);
+      const { error } = await supabase.from("modalidade").delete().eq("id", id);
 
       if (error) {
         throw error;
@@ -128,7 +123,8 @@ function CriarModalidade() {
       console.error("Erro ao deletar:", err);
       setMensagem({
         tipo: "erro",
-        texto: "Erro ao deletar modalidade. Verifique se existem times ou partidas associadas.",
+        texto:
+          "Erro ao deletar modalidade. Verifique se existem times ou partidas associadas.",
       });
     }
   };
@@ -140,9 +136,7 @@ function CriarModalidade() {
 
         {/* FEEDBACK DE STATUS */}
         {mensagem.texto && (
-          <p className={`mensagem-status ${mensagem.tipo}`}>
-            {mensagem.texto}
-          </p>
+          <p className={`mensagem-status ${mensagem.tipo}`}>{mensagem.texto}</p>
         )}
 
         {/* FORMULÁRIO DE CRIAÇÃO */}
@@ -198,8 +192,8 @@ function CriarModalidade() {
                       {mod.genero === "M"
                         ? "Masculino"
                         : mod.genero === "F"
-                        ? "Feminino"
-                        : "Misto"}
+                          ? "Feminino"
+                          : "Misto"}
                     </span>
                   </div>
                   <button

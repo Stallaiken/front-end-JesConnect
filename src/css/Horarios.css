@@ -148,25 +148,30 @@
   gap: 8px;
   flex: 1;
 }
-
-/* RETÂNGULO DA BANDEIRA (TAMANHO AUMENTADO) */
+/* Bandeiras legais GUSTAVO NÃO MEXA MAIS AQUI*/
 .box-logo {
-  width: 90px; /* Aumentado */
-  height: 60px; /* Aumentado */
+  width: 90px; /* Largura fixa */
+  height: 60px; /* Altura fixa */
   background-color: #ffffff;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  padding: 2px;
+  overflow: hidden; 
   box-sizing: border-box;
 }
 
+
 .bandeira-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Preenche a caixa mantendo a proporção */
+
+  display: block; 
+  width: 90px !important;  
+  height: 60px !important; 
+  max-width: 100%;  
+  max-height: 100%; 
+  
+
+  object-fit: cover;
 }
 
 .nome-turma {
@@ -308,7 +313,9 @@
   background-color: #dc2626;
   color: #ffffff;
 }
-/* Posicionamento da Seta Fixa no Select */
+
+
+/* Posicionamento da Seta Select */
 .select-modalidade-wrapper {
   position: relative;
   display: inline-block;
@@ -317,7 +324,7 @@
 .select-modalidade {
   appearance: none;
   -webkit-appearance: none;
-  padding-right: 35px !important; /* Espaço para a seta não cobrir o texto */
+  padding-right: 35px !important; 
   cursor: pointer;
 }
 
@@ -332,7 +339,7 @@
 }
 
 /* ==========================================
-   DIVISOR "EM BREVE" (CENTRALIZADO & TOTALMENTE ALINHADO)
+   DIVISOR 
    ========================================== */
 .divisor-em-breve {
   position: relative;
@@ -366,7 +373,7 @@
   border-radius: 50px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 0 0 6px #18181c; /* Cor de fundo da página para cobrir a linha atrás do botão */
+  box-shadow: 0 0 0 6px #18181c; 
 }
 
 .aviso-selecao {

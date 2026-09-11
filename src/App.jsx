@@ -21,7 +21,7 @@ import CriarModalidade from "./Pages/admin/CriarModalidade.jsx";
 import DeletarTime from "./Pages/admin/DeletarTimeJEs.jsx";
 import EditarJogo from "./Pages/admin/EditarJogo.jsx";
 import ComecarJogo from "./Pages/admin/ComecarJogo.jsx";
-import { supabase } from "./supabaseClient.js";
+import { supabase } from "./utils/supabaseClient.js";
 
 function AppContent() {
   const [acaoSelecao, setAcaoSelecao] = useState(null);
@@ -75,7 +75,10 @@ function AppContent() {
         return;
       }
 
-      const { error } = await supabase.from("confronto").delete().eq("id", jogo.id);
+      const { error } = await supabase
+        .from("confronto")
+        .delete()
+        .eq("id", jogo.id);
       if (error) {
         alert(`Não foi possível excluir a partida: ${error.message}`);
         return;
@@ -113,7 +116,7 @@ function AppContent() {
           }
         />
 
-        {/* Rotas Administrativas sem BarraAdmin Duplicada */}
+        {/* Rotas Administrativas */}
         <Route path="/administrativo" element={<Administrativo />} />
         <Route path="/adicionar-jogo" element={<AdicionarJogo />} />
         <Route path="/editar-jogo" element={<EditarJogo />} />
@@ -124,16 +127,34 @@ function AppContent() {
         <Route path="/criar-modalidade" element={<CriarModalidade />} />
         <Route path="/deletar-time" element={<DeletarTime />} />
 
-        {/* Redirecionamentos para legados com Maiúsculas */}
+          {/*Outras rotas */}
         <Route path="/Horarios" element={<Navigate to="/horarios" replace />} />
-        <Route path="/Historico" element={<Navigate to="/historico" replace />} />
+        <Route
+          path="/Historico"
+          element={<Navigate to="/historico" replace />}
+        />
         <Route path="/Ranking" element={<Navigate to="/ranking" replace />} />
         <Route path="/Times" element={<Navigate to="/times" replace />} />
-        <Route path="/Chaveamento" element={<Navigate to="/chaveamento" replace />} />
-        <Route path="/Administrativo" element={<Navigate to="/administrativo" replace />} />
-        <Route path="/Finalizar" element={<Navigate to="/finalizar" replace />} />
-        <Route path="/adicionarTime" element={<Navigate to="/adicionar-time" replace />} />
-        <Route path="/criarModalidade" element={<Navigate to="/criar-modalidade" replace />} />
+        <Route
+          path="/Chaveamento"
+          element={<Navigate to="/chaveamento" replace />}
+        />
+        <Route
+          path="/Administrativo"
+          element={<Navigate to="/administrativo" replace />}
+        />
+        <Route
+          path="/Finalizar"
+          element={<Navigate to="/finalizar" replace />}
+        />
+        <Route
+          path="/adicionarTime"
+          element={<Navigate to="/adicionar-time" replace />}
+        />
+        <Route
+          path="/criarModalidade"
+          element={<Navigate to="/criar-modalidade" replace />}
+        />
 
         {/* Rota 404 */}
         <Route path="*" element={<Erro404 />} />

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PÁGINA ADICIONAR JOGO - TEMA ESCURO QUENTE COM DETALHES EM LARANJA
+   PÁGINA ADICIONAR JOGO 
    ========================================================================== */
 
 .add-jogo-page {
@@ -8,22 +8,22 @@
   align-items: center;
   min-height: 100vh;
   padding: 20px 16px;
-  background-color: #0d0d0f; /* Grafite profundo bem aquecido */
+  background-color: #0d0d0f; 
   box-sizing: border-box;
 }
 
-/* Card Principal com Borda de Destaque Laranja no Topo */
+
 .add-jogo-container {
   position: relative;
   width: 100%;
   max-width: 440px;
   background: #16161a;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-top: 3px solid #ff6b00; /* Linha de assinatura Laranja */
+  border-top: 3px solid #ff6b00; 
   border-radius: 20px;
   padding: 32px 26px;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4),
-              0 0 40px rgba(255, 107, 0, 0.05); /* Glow laranja suave ao fundo */
+              0 0 40px rgba(255, 107, 0, 0.05); 
   box-sizing: border-box;
   animation: cardEmergir 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }

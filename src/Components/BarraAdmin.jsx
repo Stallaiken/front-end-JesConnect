@@ -41,10 +41,18 @@ function BarraAdmin({ acaoSelecao, onIniciarSelecao }) {
               {acaoSelecao === "editar" ? "CANCELAR EDIÇÃO" : "EDITAR PARTIDA"}
             </button>
 
-            <button type="button" className={`admin-btn-acao ${acaoSelecao === "deletar" ? "ativo" : ""}`} onClick={() => selecionarPara("deletar")}>
+            <button
+              type="button"
+              className={`admin-btn-acao ${acaoSelecao === "deletar" ? "ativo" : ""}`}
+              onClick={() => selecionarPara("deletar")}
+            >
               DELETAR PARTIDA
             </button>
-            <button type="button" className={`admin-btn-acao ${acaoSelecao === "comecar" ? "ativo" : ""}`} onClick={() => selecionarPara("comecar")}>
+            <button
+              type="button"
+              className={`admin-btn-acao ${acaoSelecao === "comecar" ? "ativo" : ""}`}
+              onClick={() => selecionarPara("comecar")}
+            >
               COMEÇAR
             </button>
             <button

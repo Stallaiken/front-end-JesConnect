@@ -1,5 +1,5 @@
 /* ==========================================
-   CHAVEAMENTO - CONTAINER PRINCIPAL
+   CHAVEAMENTO
    ========================================== */
 .chaveamento-container {
   width: 100%;
@@ -101,7 +101,7 @@
 }
 
 /* ==========================================
-   BRACKET / CHAVEAMENTO (ROLAGEM HORIZONTAL)
+  CHAVEAMENTO
    ========================================== */
 .bracket {
   width: 100%;
@@ -226,7 +226,7 @@
   font-weight: 700;
 }
 
-/* TIME VAZIO (SLOT DISPONÍVEL) */
+/* TIME VAZIO  */
 .time-vazio {
   color: #666a75;
   background-color: rgba(255, 255, 255, 0.02);
