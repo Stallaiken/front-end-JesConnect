@@ -10,7 +10,7 @@ import Visitante from "./Pages/Visitante.jsx";
 import Horarios from "./Pages/Horarios.jsx";
 import Historico from "./Pages/Historico.jsx";
 import Ranking from "./Pages/Ranking.jsx";
-
+import Times from "./Pages/Times.jsx";
 import AdicionarJogo from "./Pages/AdicionarJogo.jsx";
 import EditarTime from "./Pages/EditarTime.jsx";
 import Finalizar from "./Pages/Finalizar.jsx";
@@ -28,6 +28,7 @@ function App() {
         <Route path="/Horarios" element={<Horarios />} />
         <Route path="/Historico" element={<Historico />} />
         <Route path="/Ranking" element={<Ranking />} />
+        <Route path="/Times" element={<Times />} />
 
         {/* Área administrativa */}
         <Route path="/adicionar-jogo" element={<AdicionarJogo />} />

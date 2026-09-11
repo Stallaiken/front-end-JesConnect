@@ -18,7 +18,6 @@ function Menu() {
       return;
     }
 
-    // Busca no banco se este usuário específico é admin
     const { data, error } = await supabase
       .from("usuarios")
       .select("is_admin")
@@ -35,7 +34,6 @@ function Menu() {
   useEffect(() => {
     checarAdminNoBanco();
 
-    // Ouve quando o login é efetuado para reavaliar no banco imediatamente
     window.addEventListener("admin-status-change", checarAdminNoBanco);
     return () => {
       window.removeEventListener("admin-status-change", checarAdminNoBanco);
@@ -58,6 +56,7 @@ function Menu() {
           <Link to="/Horarios">Ao VIVO</Link>
           <Link to="/Ranking">Ranking</Link>
           <Link to="/Historico">Histórico</Link>
+          <Link to="/Times">Times</Link>
           <Link to="/Administrativo" onClick={handleAdminClick}>
             Admin
           </Link>
